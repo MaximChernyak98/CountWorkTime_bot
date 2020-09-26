@@ -5,6 +5,8 @@ config.py
 *.csv
 .vscode/
 .idea/
+cascades/
+
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
