@@ -16,7 +16,7 @@ path_to_face_cascade = os.path.join(current_dir,
                                     face_cascade_xml)
 
 
-def start_caption():
+def start_caption_frame():
     face_cascade = cv2.CascadeClassifier(path_to_face_cascade)
-    caption_picture = cv2.VideoCapture(0)
-    return face_cascade, caption_picture
+    videostream_for_caption = cv2.VideoCapture(0)
+    return face_cascade, videostream_for_caption
