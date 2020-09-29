@@ -1,9 +1,7 @@
 # pip import
 import cv2.cv2 as cv2
 
-# files import
-from utils.get_frame import get_frame
-from utils.start_caption import start_caption_frame
+from utils import get_frame, start_caption_frame
 
 
 def main():
