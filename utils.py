@@ -1,14 +1,10 @@
-# std import
 import os
 
-# pip import
-import cv2.cv2 as cv2
+import cv2
 
-# variables
 current_dir = os.path.dirname(__file__)
 face_cascade_xml = 'haarcascade_frontalface_default.xml'
 
-# get path to using cascade (in any system)
 path_to_face_cascade = os.path.join(
     current_dir,
     '..',
@@ -20,8 +16,8 @@ path_to_face_cascade = os.path.join(
 
 def start_caption_frame():
     face_cascade = cv2.CascadeClassifier(path_to_face_cascade)
-    video_сapture = cv2.VideoCapture(0)
-    return face_cascade, video_сapture
+    video_capture = cv2.VideoCapture(0)
+    return face_cascade, video_capture
 
 
 def get_frame(face_cascade, videostream_for_caption):
