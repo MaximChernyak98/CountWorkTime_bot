@@ -1,4 +1,4 @@
-import cv2.cv2 as cv2
+import cv2
 
 from utils import get_frame, start_caption_frame
 
