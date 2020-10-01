@@ -7,7 +7,6 @@ face_cascade_xml = 'haarcascade_frontalface_default.xml'
 
 path_to_face_cascade = os.path.join(
     current_dir,
-    '..',
     'cascades',
     'data',
     face_cascade_xml

@@ -2,6 +2,8 @@ import cv2
 
 from utils import get_frame, start_caption_frame
 
+face_counter = 0
+
 
 def main():
     face_cascade, videostream_for_caption = start_caption_frame()
