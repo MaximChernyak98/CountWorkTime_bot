@@ -42,8 +42,4 @@ def get_frame(face_cascade, videostream_for_caption):
         roi_end_point = (end_coordinate_x, end_coordinate_y)
 
         cv2.rectangle(frame, roi_start_point, roi_end_point, roi_color, roi_stroke)
-    if faces != ():
-        face_increment = 1
-    else:
-        face_increment = 0
-    return frame, face_increment
+    return frame
