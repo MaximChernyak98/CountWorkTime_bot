@@ -6,7 +6,7 @@ from utils import get_frame, start_caption_frame
 def main():
     face_cascade, videostream_for_caption = start_caption_frame()
     while True:
-        frame, face_increment = get_frame(face_cascade, videostream_for_caption)
+        frame = get_frame(face_cascade, videostream_for_caption)
         cv2.imshow('frame', frame)
         if cv2.waitKey(20) & 0xFF == ord('q'):
             break
