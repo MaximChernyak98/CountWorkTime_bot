@@ -2,6 +2,8 @@ import os
 import datetime
 import cv2
 
+import globals
+
 current_dir = os.path.dirname(__file__)
 face_cascade_xml = 'haarcascade_frontalface_default.xml'
 
@@ -35,7 +37,7 @@ def search_faces_in_frames(face_cascade, videostream_for_caption):
                 print('Видеопоток не найден, проверьте подключение камеры')
                 return False, 0
         for (start_coord_x, start_coord_y, width, hieght) in faces:
-            print(start_coord_x, start_coord_y, width, hieght)
+            # print(start_coord_x, start_coord_y, width, hieght)
             end_coordinate_x = start_coord_x + width
             end_coordinate_y = start_coord_y + hieght
 
@@ -50,16 +52,41 @@ def search_faces_in_frames(face_cascade, videostream_for_caption):
     return number_of_face_occurrences
 
 
-def is_man_at_work(number_of_face_occurrences, number_of_hits_to_start):
-    if number_of_face_occurrences != 0:
-        number_of_hits_to_start += 1
-        if number_of_hits_to_start > 10:
-            number_of_hits_to_start = 10
-            return True, number_of_hits_to_start
-        return False, number_of_hits_to_start
+def count_hits_at_workplace(number_of_face_occurrences, number_of_hits):
+    if number_of_face_occurrences > 0:
+        number_of_hits += 1
+        if number_of_hits > 5:
+            number_of_hits = 10
+            globals.IS_MAN_AT_WORKPLACE = True
+            if globals.IS_WORKDAY_STARTED:
+                globals.IS_BREAK = False
+            if not globals.IS_WORKDAY_STARTED:
+                globals.IS_WORKDAY_STARTED = True
     else:
-        number_of_hits_to_start -= 1
-        if number_of_hits_to_start < 0:
-            number_of_hits_to_start = 0
-            return False, number_of_hits_to_start
-        return True, number_of_hits_to_start
+        number_of_hits -= 1
+        if number_of_hits < 0:
+            globals.IS_MAN_AT_WORKPLACE = False
+            number_of_hits = 0
+            if globals.IS_WORKDAY_STARTED:
+                globals.IS_BREAK = True
+    return number_of_hits
+
+
+def count_work_intervals(intervals_list, states_from_previous_iteration):
+    if (not states_from_previous_iteration['start work?']) and globals.IS_WORKDAY_STARTED:
+        intervals_list.append(f'{datetime.datetime.now().strftime("%H:%M:%S")} - начало работы')
+    if states_from_previous_iteration['start work?']:
+        # only if man return to workplace
+        if (not states_from_previous_iteration['man at work?']) and globals.IS_MAN_AT_WORKPLACE:
+            intervals_list.append(f'{datetime.datetime.now().strftime("%H:%M:%S")} - продолжил работу')
+        # only if man go for break
+        if (not states_from_previous_iteration['break?']) and globals.IS_BREAK:
+            intervals_list.append(f'{datetime.datetime.now().strftime("%H:%M:%S")} - начался перерыв')
+    return intervals_list
+
+
+def set_states_current_iteration(states_from_previous_iteration):
+    states_from_previous_iteration['start work?'] = globals.IS_WORKDAY_STARTED
+    states_from_previous_iteration['man at work?'] = globals.IS_MAN_AT_WORKPLACE
+    states_from_previous_iteration['break?'] = globals.IS_BREAK
+    return states_from_previous_iteration

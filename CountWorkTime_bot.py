@@ -1,18 +1,26 @@
 import cv2
 
-from utils import search_faces_in_frames, start_caption_frame, is_man_at_work
+from utils import (
+    search_faces_in_frames,
+    start_caption_frame,
+    count_hits_at_workplace,
+    count_work_intervals,
+    set_states_current_iteration
+)
+import globals
 
 
 def main():
     face_cascade, videostream_for_caption = start_caption_frame()
-
-    is_man_at_work_b = False
-    number_of_hits_to_start = 0
+    number_of_hits = 0
+    intervals_list = []
+    states_from_previous_iteration = {'start work?': False, 'man at work?': False, 'break?': False}
     while True:
         number_of_face_occurrences = search_faces_in_frames(face_cascade, videostream_for_caption)
-        is_man_at_work_b, result_number_of_hits = is_man_at_work(number_of_face_occurrences, number_of_hits_to_start)
-        number_of_hits_to_start = result_number_of_hits
-        print(f'{result_number_of_hits} - человек на работе? {is_man_at_work_b}')
+        number_of_hits = count_hits_at_workplace(number_of_face_occurrences, number_of_hits)
+        intervals_list = count_work_intervals(intervals_list, states_from_previous_iteration)
+        states_from_previous_iteration = set_states_current_iteration(states_from_previous_iteration)
+        print(intervals_list)
     videostream_for_caption.release()
 
 
