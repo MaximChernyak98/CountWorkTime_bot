@@ -33,6 +33,8 @@ def search_faces_in_frames(face_cascade, videostream_for_caption):
         try:
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
             faces = face_cascade.detectMultiScale(gray, scaleFactor=1.5, minNeighbors=5)
+            if faces != ():
+                number_of_face_occurrences += 1
         except cv2.error as e:
             if e.err == "!_src.empty()":
                 print('Видеопоток не найден, проверьте подключение камеры')
@@ -48,7 +50,7 @@ def count_hits_at_workplace(number_of_face_occurrences, number_of_hits):
             globals.IS_MAN_AT_WORKPLACE = True
             if globals.IS_WORKDAY_STARTED:
                 globals.IS_BREAK = False
-            else:
+            if not globals.IS_WORKDAY_STARTED:
                 globals.IS_WORKDAY_STARTED = True
     else:
         number_of_hits -= 1
@@ -62,16 +64,16 @@ def count_hits_at_workplace(number_of_face_occurrences, number_of_hits):
 
 def count_work_intervals(states_from_previous_iteration):
     if (not states_from_previous_iteration['start_work']) and globals.IS_WORKDAY_STARTED:
-        globals.LAST_TIME_STAMP = datetime.datetime.now()
+        globals.LAST_TIME_STAMP = datetime.now()
     if states_from_previous_iteration['start_work']:
         # only if man return to workplace
         if (not states_from_previous_iteration['man_at_work']) and globals.IS_MAN_AT_WORKPLACE:
             calculate_period_time(is_return_from_break=True)
-            globals.LAST_TIME_STAMP = datetime.datetime.now()
+            globals.LAST_TIME_STAMP = datetime.now()
         # only if man go for break
         if (not states_from_previous_iteration['break']) and globals.IS_BREAK:
             calculate_period_time(is_return_from_break=False)
-            globals.LAST_TIME_STAMP = datetime.datetime.now()
+            globals.LAST_TIME_STAMP = datetime.now()
 
 
 def set_states_current_iteration(states_from_previous_iteration):
@@ -82,10 +84,10 @@ def set_states_current_iteration(states_from_previous_iteration):
 
 
 def calculate_period_time(is_return_from_break):
-    period_time = datetime.datetime.now() - globals.LAST_TIME_STAMP
+    period_time = datetime.now() - globals.LAST_TIME_STAMP
     if is_return_from_break:
-        period_time += datetime.timedelta(seconds=globals.HITS_TO_BREAK)
+        period_time += timedelta(seconds=globals.HITS_TO_BREAK)
         globals.SUMMARY_BREAK_TIME += period_time
     else:
-        period_time += datetime.timedelta(seconds=globals.HITS_TO_START_WORK)
+        period_time += timedelta(seconds=globals.HITS_TO_START_WORK)
         globals.SUMMARY_WORK_TIME += period_time
