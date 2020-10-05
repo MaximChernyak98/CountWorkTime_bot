@@ -60,7 +60,7 @@ def count_hits_at_workplace(number_of_face_occurrences, number_of_hits):
     return number_of_hits
 
 
-def count_work_intervals(intervals_list, states_from_previous_iteration):
+def count_work_intervals(states_from_previous_iteration):
     if (not states_from_previous_iteration['start_work']) and globals.IS_WORKDAY_STARTED:
         globals.LAST_TIME_STAMP = datetime.datetime.now()
     if states_from_previous_iteration['start_work']:
