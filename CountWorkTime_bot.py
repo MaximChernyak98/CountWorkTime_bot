@@ -14,7 +14,7 @@ def main():
     face_cascade, videostream_for_caption = start_caption_frame()
     number_of_hits = 0
     intervals_list = []
-    states_from_previous_iteration = {'start work?': False, 'man at work?': False, 'break?': False}
+    states_from_previous_iteration = {'start_work': False, 'man_at_work': False, 'break': False}
     while True:
         number_of_face_occurrences = search_faces_in_frames(face_cascade, videostream_for_caption)
         number_of_hits = count_hits_at_workplace(number_of_face_occurrences, number_of_hits)
