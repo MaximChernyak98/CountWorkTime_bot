@@ -18,9 +18,9 @@ def main():
     while True:
         number_of_face_occurrences = search_faces_in_frames(face_cascade, videostream_for_caption)
         number_of_hits = count_hits_at_workplace(number_of_face_occurrences, number_of_hits)
-        count_work_intervals(states_from_previous_iteration)
+        intervals_list = count_work_intervals(intervals_list, states_from_previous_iteration)
         states_from_previous_iteration = set_states_current_iteration(states_from_previous_iteration)
-        print(f'Work - {globals.SUMMARY_WORK_TIME}, rest - {globals.SUMMARY_BREAK_TIME}')
+        print(intervals_list)
     videostream_for_caption.release()
 
 
