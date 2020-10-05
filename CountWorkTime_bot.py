@@ -7,7 +7,7 @@ from utils import (
     count_work_intervals,
     set_states_current_iteration
 )
-import globals
+import settings
 
 
 def main():
@@ -20,7 +20,7 @@ def main():
         number_of_hits = count_hits_at_workplace(number_of_face_occurrences, number_of_hits)
         count_work_intervals(states_from_previous_iteration)
         states_from_previous_iteration = set_states_current_iteration(states_from_previous_iteration)
-        print(f'Work - {globals.SUMMARY_WORK_TIME}, rest - {globals.SUMMARY_BREAK_TIME}')
+        print(f'Work - {settings.SUMMARY_WORK_TIME}, rest - {settings.SUMMARY_BREAK_TIME}')
         print(states_from_previous_iteration)
     videostream_for_caption.release()
 

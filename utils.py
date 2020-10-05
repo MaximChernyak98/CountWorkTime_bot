@@ -2,7 +2,7 @@ import os
 from datetime import datetime, timedelta
 import cv2
 
-import globals
+import settings
 
 current_dir = os.path.dirname(__file__)
 face_cascade_xml = 'haarcascade_frontalface_default.xml'
@@ -45,49 +45,49 @@ def search_faces_in_frames(face_cascade, videostream_for_caption):
 def count_hits_at_workplace(number_of_face_occurrences, number_of_hits):
     if number_of_face_occurrences > 0:
         number_of_hits += 1
-        if number_of_hits > globals.HITS_TO_START_WORK:
-            number_of_hits = globals.HITS_TO_BREAK
-            globals.IS_MAN_AT_WORKPLACE = True
-            if globals.IS_WORKDAY_STARTED:
-                globals.IS_BREAK = False
-            if not globals.IS_WORKDAY_STARTED:
-                globals.IS_WORKDAY_STARTED = True
+        if number_of_hits > settings.HITS_TO_START_WORK:
+            number_of_hits = settings.HITS_TO_BREAK
+            settings.IS_MAN_AT_WORKPLACE = True
+            if settings.IS_WORKDAY_STARTED:
+                settings.IS_BREAK = False
+            if not settings.IS_WORKDAY_STARTED:
+                settings.IS_WORKDAY_STARTED = True
     else:
         number_of_hits -= 1
         if number_of_hits < 0:
-            globals.IS_MAN_AT_WORKPLACE = False
+            settings.IS_MAN_AT_WORKPLACE = False
             number_of_hits = 0
-            if globals.IS_WORKDAY_STARTED:
-                globals.IS_BREAK = True
+            if settings.IS_WORKDAY_STARTED:
+                settings.IS_BREAK = True
     return number_of_hits
 
 
 def count_work_intervals(states_from_previous_iteration):
-    if (not states_from_previous_iteration['start_work']) and globals.IS_WORKDAY_STARTED:
-        globals.LAST_TIME_STAMP = datetime.now()
+    if (not states_from_previous_iteration['start_work']) and settings.IS_WORKDAY_STARTED:
+        settings.LAST_TIME_STAMP = datetime.now()
     if states_from_previous_iteration['start_work']:
         # only if man return to workplace
-        if (not states_from_previous_iteration['man_at_work']) and globals.IS_MAN_AT_WORKPLACE:
+        if (not states_from_previous_iteration['man_at_work']) and settings.IS_MAN_AT_WORKPLACE:
             calculate_period_time(is_return_from_break=True)
-            globals.LAST_TIME_STAMP = datetime.now()
+            settings.LAST_TIME_STAMP = datetime.now()
         # only if man go for break
-        if (not states_from_previous_iteration['break']) and globals.IS_BREAK:
+        if (not states_from_previous_iteration['break']) and settings.IS_BREAK:
             calculate_period_time(is_return_from_break=False)
-            globals.LAST_TIME_STAMP = datetime.now()
+            settings.LAST_TIME_STAMP = datetime.now()
 
 
 def set_states_current_iteration(states_from_previous_iteration):
-    states_from_previous_iteration['start_work'] = globals.IS_WORKDAY_STARTED
-    states_from_previous_iteration['man_at_work'] = globals.IS_MAN_AT_WORKPLACE
-    states_from_previous_iteration['break'] = globals.IS_BREAK
+    states_from_previous_iteration['start_work'] = settings.IS_WORKDAY_STARTED
+    states_from_previous_iteration['man_at_work'] = settings.IS_MAN_AT_WORKPLACE
+    states_from_previous_iteration['break'] = settings.IS_BREAK
     return states_from_previous_iteration
 
 
 def calculate_period_time(is_return_from_break):
-    period_time = datetime.now() - globals.LAST_TIME_STAMP
+    period_time = datetime.now() - settings.LAST_TIME_STAMP
     if is_return_from_break:
-        period_time += timedelta(seconds=globals.HITS_TO_BREAK)
-        globals.SUMMARY_BREAK_TIME += period_time
+        period_time += timedelta(seconds=settings.HITS_TO_BREAK)
+        settings.SUMMARY_BREAK_TIME += period_time
     else:
-        period_time += timedelta(seconds=globals.HITS_TO_START_WORK)
-        globals.SUMMARY_WORK_TIME += period_time
+        period_time += timedelta(seconds=settings.HITS_TO_START_WORK)
+        settings.SUMMARY_WORK_TIME += period_time
