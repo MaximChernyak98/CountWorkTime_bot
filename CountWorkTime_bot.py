@@ -18,9 +18,8 @@ def main():
     while True:
         number_of_face_occurrences = search_faces_in_frames(face_cascade, videostream_for_caption)
         number_of_hits = count_hits_at_workplace(number_of_face_occurrences, number_of_hits)
-        intervals_list = count_work_intervals(intervals_list, states_from_previous_iteration)
+         count_work_intervals(states_from_previous_iteration)
         states_from_previous_iteration = set_states_current_iteration(states_from_previous_iteration)
-        print(intervals_list)
     videostream_for_caption.release()
 
 

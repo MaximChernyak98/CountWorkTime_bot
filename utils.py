@@ -1,5 +1,5 @@
 import os
-import datetime
+from datetime import datetime, timedelta
 import cv2
 
 import globals
@@ -65,14 +65,13 @@ def count_work_intervals(intervals_list, states_from_previous_iteration):
         globals.LAST_TIME_STAMP = datetime.datetime.now()
     if states_from_previous_iteration['start_work']:
         # only if man return to workplace
-        if (not states_from_previous_iteration['man at work?']) and globals.IS_MAN_AT_WORKPLACE:
+        if (not states_from_previous_iteration['man_at_work']) and globals.IS_MAN_AT_WORKPLACE:
             calculate_period_time(is_return_from_break=True)
             globals.LAST_TIME_STAMP = datetime.datetime.now()
         # only if man go for break
-        if (not states_from_previous_iteration['break?']) and globals.IS_BREAK:
+        if (not states_from_previous_iteration['break']) and globals.IS_BREAK:
             calculate_period_time(is_return_from_break=False)
             globals.LAST_TIME_STAMP = datetime.datetime.now()
-
 
 
 def set_states_current_iteration(states_from_previous_iteration):
