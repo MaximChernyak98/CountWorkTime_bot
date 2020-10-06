@@ -50,7 +50,7 @@ def count_hits_at_workplace(number_of_face_occurrences, number_of_hits):
             settings.IS_MAN_AT_WORKPLACE = True
             if settings.IS_WORKDAY_STARTED:
                 settings.IS_BREAK = False
-            if not settings.IS_WORKDAY_STARTED:
+            else:
                 settings.IS_WORKDAY_STARTED = True
     else:
         number_of_hits -= 1
