@@ -1,21 +1,28 @@
-# pip import
-import cv2.cv2 as cv2
+import cv2
 
-# files import
-from utils.get_image import get_frame
-from utils.start_caption import start_caption
+from utils import (
+    search_faces_in_frames,
+    start_caption_frame,
+    count_job_detection,
+    count_work_intervals,
+    set_states_current_iteration
+)
+import settings
 
 
 def main():
-    face_cascade, caption_picture = start_caption()
+    number_job_detection = 0
+    states_from_previous_iteration = {'start_work': False, 'man_at_work': False}
+
+    face_cascade, video_for_caption = start_caption_frame()
+
     while True:
-        frame = get_frame(caption_picture, face_cascade)
-        # Display the resulting frame
-        cv2.imshow('frame', frame)
-        if cv2.waitKey(20) & 0xFF == ord('q'):
-            break
-    # When everything done, release the capture
-    caption_picture.release()
+        number_of_face_occurrences = search_faces_in_frames(face_cascade, video_for_caption)
+        number_job_detection = count_job_detection(number_of_face_occurrences, number_job_detection)
+        count_work_intervals(states_from_previous_iteration)
+        states_from_previous_iteration = set_states_current_iteration(states_from_previous_iteration)
+        print(f'Work - {settings.SUMMARY_WORK_TIME}, rest - {settings.SUMMARY_BREAK_TIME}')
+        print(states_from_previous_iteration)
 
 
 if __name__ == '__main__':
