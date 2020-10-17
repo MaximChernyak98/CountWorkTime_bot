@@ -1,7 +1,5 @@
 from datetime import datetime, timedelta
 
-
-
 IS_MAN_AT_WORKPLACE = False
 IS_WORKDAY_STARTED = False
 
