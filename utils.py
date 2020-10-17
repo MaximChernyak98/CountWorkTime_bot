@@ -26,7 +26,7 @@ def search_faces_in_frames(face_cascade, video_for_caption):
         try:
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
             faces = face_cascade.detectMultiScale(gray, scaleFactor=1.5, minNeighbors=5)
-            if faces != ():
+            if len(faces) > 0:
                 number_of_face_occurrences += 1
         except cv2.error as e:
             if e.err == "!_src.empty()":
@@ -39,8 +39,7 @@ def count_job_detection(number_of_face_occurrences, number_job_detection):
         number_job_detection += 1
         if number_job_detection > settings.SECONDS_TO_START_WORK:
             number_job_detection = settings.SECONDS_TO_BREAK
-            settings.IS_MAN_AT_WORKPLACE = True
-            settings.IS_WORKDAY_STARTED = True
+            settings.IS_MAN_AT_WORKPLACE = settings.IS_WORKDAY_STARTED = True
     else:
         number_job_detection -= 1
         if number_job_detection < 0:
@@ -69,7 +68,7 @@ def set_states_current_iteration(states_from_previous_iteration):
     return states_from_previous_iteration
 
 
-def calculate_period_time(is_return_from_break):
+def calculate_period_time(is_return_from_break=False):
     period_time = datetime.now() - settings.LAST_TIME_STAMP
     if is_return_from_break:
         period_time += timedelta(seconds=settings.SECONDS_TO_BREAK)
