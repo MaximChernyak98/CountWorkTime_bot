@@ -4,6 +4,7 @@ import cv2
 import sys
 
 import settings
+import config
 
 
 def start_caption_frame():
@@ -48,9 +49,11 @@ def count_job_detection(number_of_face_occurrences, number_job_detection):
     return number_job_detection
 
 
-def count_work_intervals(states_from_previous_iteration):
+def count_work_intervals(states_from_previous_iteration, mybot):
     if (not states_from_previous_iteration['start_work']) and settings.IS_WORKDAY_STARTED:
         settings.LAST_TIME_STAMP = datetime.now()
+        first_message = f'Вижу тебя, с началом рабочего дня!'
+        mybot.bot.send_message(chat_id=config.CHAT_ID, text=first_message)
     if states_from_previous_iteration['start_work']:
         # only if man return to workplace
         if (not states_from_previous_iteration['man_at_work']) and settings.IS_MAN_AT_WORKPLACE:
