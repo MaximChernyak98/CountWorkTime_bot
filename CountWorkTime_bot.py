@@ -22,6 +22,7 @@ logging.basicConfig(
 def main():
     mybot = Updater(token=config.TOKEN, use_context=True)
 
+
     number_job_detection = 0
     states_from_previous_iteration = {'start_work': False, 'man_at_work': False}
 
