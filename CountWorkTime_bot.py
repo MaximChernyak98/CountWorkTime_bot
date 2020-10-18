@@ -19,6 +19,8 @@ from utils import (
 import handlers
 import settings
 import config
+import dialogues
+
 
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -28,8 +30,7 @@ logging.basicConfig(
 
 
 def main():
-    mybot = Updater(token=config.TOKEN, use_context=True)
-    dp = mybot.dispatcher
+    dp = settings.MYBOT.dispatcher
 
     number_job_detection = 0
     states_from_previous_iteration = {'start_work': False, 'man_at_work': False}
@@ -39,15 +40,13 @@ def main():
     while True:
         number_of_face_occurrences = search_faces_in_frames(face_cascade, video_for_caption)
         number_job_detection = count_job_detection(number_of_face_occurrences, number_job_detection)
-        count_work_intervals(states_from_previous_iteration, mybot)
+        count_work_intervals(states_from_previous_iteration)
 
         dp.add_handler(CallbackQueryHandler(handlers.end_of_day, pattern='end_workday'))
         dp.add_handler(CallbackQueryHandler(handlers.mini_break, pattern='mini_break'))
-        dp.add_handler(CallbackQueryHandler(handlers.rest, pattern='rest'))
-        dp.add_handler(CallbackQueryHandler(handlers.work_issue, pattern='work_issue'))
-        dp.add_handler(CallbackQueryHandler(handlers.dinner, pattern='dinner'))
+        dp.add_handler(CallbackQueryHandler(dialogues.rest_message, pattern='rest'))
 
-        mybot.start_polling()
+        settings.MYBOT.start_polling()
         states_from_previous_iteration = set_states_current_iteration(states_from_previous_iteration)
 
 

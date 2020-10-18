@@ -1,36 +1,41 @@
 import config
+import settings
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 
 
-def return_to_workspace_message(context):
-    keyboard = [[InlineKeyboardButton("Отдых", callback_data='rest'),
-                 InlineKeyboardButton("Рабочий вопрос", callback_data='work_issue'),
-                 InlineKeyboardButton("Обед", callback_data='dinner')
-                 ]]
-    reply_markup = InlineKeyboardMarkup(keyboard)
-    return_message = 'Снова тебя вижу, по какому вопросу отходил?'
-    context.bot.send_message(chat_id=config.CHAT_ID, text=return_message, reply_markup=reply_markup)
+def print_message_with_keyboard(message, buttons_text_list):
+    keyboard = []
+    for button in buttons_text_list:
+        keyboard.append(InlineKeyboardButton(button[0], callback_data=button[1]))
+    reply_markup = InlineKeyboardMarkup([keyboard])
+    settings.MYBOT.bot.send_message(chat_id=config.CHAT_ID, text=message, reply_markup=reply_markup)
 
 
-def left_from_workspace_message(context):
-    keyboard = [[InlineKeyboardButton("Рабочий день закончен", callback_data='end_workday'),
-                 InlineKeyboardButton("Отошел, но еще вернусь", callback_data='mini_break')]]
-    reply_markup = InlineKeyboardMarkup(keyboard)
-    left_message = 'Ты пропал с радаров, рабочий день закончен или еще вернешься?'
-    context.bot.send_message(chat_id=config.CHAT_ID, text=left_message, reply_markup=reply_markup)
-
-
-def print_first_message(mybot):
+def print_first_message():
     first_message = f'Вижу тебя, с началом рабочего дня!'
-    mybot.bot.send_message(chat_id=config.CHAT_ID, text=first_message)
+    settings.MYBOT.bot.send_message(chat_id=config.CHAT_ID, text=first_message)
 
 
-def print_return_to_workspace_dialogue(mybot):
-    mybot.job_queue.run_once(callback=return_to_workspace_message, when=1)
+def send_left_from_workspace_message():
+    # buttons_text_list ('button_text', 'button_callback_data')
+    buttons_text_list = [('Рабочий день закончен', 'end_workday'),
+                         ('Отошел, но еще вернусь', 'mini_break')]
+    message = 'Снова тебя вижу, по какому вопросу отходил?'
+    print_message_with_keyboard(message, buttons_text_list)
 
 
-def print_left_workspace_dialogue(mybot):
-    mybot.job_queue.run_once(callback=left_from_workspace_message, when=1)
+def send_return_to_workspace_message():
+    # buttons_text_list ('button_text', 'button_callback_data')
+    buttons_text_list = [('Отдых', 'rest'),
+                         ('Рабочий вопрос', 'work_issue'),
+                         ('Обед', 'dinner')]
+    message = 'Снова тебя вижу, по какому вопросу отходил?'
+    print_message_with_keyboard(message, buttons_text_list)
 
 
-
+def rest_message(update, context):
+    # buttons_text_list ('button_text', 'button_callback_data')
+    buttons_text_list = [('Все время отдыхал', 'full_rest'),
+                         ('Еще и поработал', 'partial_rest')]
+    message = 'Все ли время отдыхал или удалось порешать рабочие вопросики?'
+    print_message_with_keyboard(message, buttons_text_list)

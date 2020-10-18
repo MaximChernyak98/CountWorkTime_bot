@@ -50,19 +50,19 @@ def count_job_detection(number_of_face_occurrences, number_job_detection):
     return number_job_detection
 
 
-def count_work_intervals(states_from_previous_iteration, mybot):
+def count_work_intervals(states_from_previous_iteration):
     if (not states_from_previous_iteration['start_work']) and settings.IS_WORKDAY_STARTED:
         settings.LAST_TIME_STAMP = datetime.now()
-        dialogues.print_first_message(mybot)
+        dialogues.print_first_message()
     if states_from_previous_iteration['start_work']:
         # only if man return to workplace
         if (not states_from_previous_iteration['man_at_work']) and settings.IS_MAN_AT_WORKPLACE:
-            dialogues.print_return_to_workspace_dialogue(mybot)
+            dialogues.send_return_to_workspace_message()
             calculate_period_time(is_return_from_break=True)
             settings.LAST_TIME_STAMP = datetime.now()
         # only if man go for break
         if states_from_previous_iteration['man_at_work'] and not settings.IS_MAN_AT_WORKPLACE:
-            dialogues.print_left_workspace_dialogue(mybot)
+            dialogues.send_left_from_workspace_message()
             calculate_period_time(is_return_from_break=False)
             settings.LAST_TIME_STAMP = datetime.now()
 
