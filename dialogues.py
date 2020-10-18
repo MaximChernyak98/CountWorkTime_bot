@@ -39,3 +39,4 @@ def rest_message(update, context):
                          ('Еще и поработал', 'partial_rest')]
     message = 'Все ли время отдыхал или удалось порешать рабочие вопросики?'
     print_message_with_keyboard(message, buttons_text_list)
+    return 'wait_answer'
