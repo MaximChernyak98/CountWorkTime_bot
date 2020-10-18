@@ -1,4 +1,0 @@
-numpy==1.19.2
-opencv-contrib-python==4.4.0.44
-Pillow==7.2.0
-python-telegram-bot==13.0

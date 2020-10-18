@@ -5,6 +5,7 @@ import sys
 
 import settings
 import config
+import dialogues
 
 
 def start_caption_frame():
@@ -52,15 +53,16 @@ def count_job_detection(number_of_face_occurrences, number_job_detection):
 def count_work_intervals(states_from_previous_iteration, mybot):
     if (not states_from_previous_iteration['start_work']) and settings.IS_WORKDAY_STARTED:
         settings.LAST_TIME_STAMP = datetime.now()
-        first_message = f'Вижу тебя, с началом рабочего дня!'
-        mybot.bot.send_message(chat_id=config.CHAT_ID, text=first_message)
+        dialogues.print_first_message(mybot)
     if states_from_previous_iteration['start_work']:
         # only if man return to workplace
         if (not states_from_previous_iteration['man_at_work']) and settings.IS_MAN_AT_WORKPLACE:
+            dialogues.print_return_to_workspace_dialogue(mybot)
             calculate_period_time(is_return_from_break=True)
             settings.LAST_TIME_STAMP = datetime.now()
         # only if man go for break
         if states_from_previous_iteration['man_at_work'] and not settings.IS_MAN_AT_WORKPLACE:
+            dialogues.print_left_workspace_dialogue(mybot)
             calculate_period_time(is_return_from_break=False)
             settings.LAST_TIME_STAMP = datetime.now()
 
