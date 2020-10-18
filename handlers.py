@@ -15,3 +15,11 @@ def mini_break(update, context):
     update.callback_query.answer('Понял, жду возвращения')
     mini_break_message = f'Объявлен мини-перерыв, жду возвращения'
     update.callback_query.edit_message_text(text=mini_break_message)
+
+def rest(update, context):
+    def print_return_to_workspace_dialogue(mybot):
+        mybot.job_queue.run_once(callback=return_to_workspace_message, when=1)
+
+    update.callback_query.answer('Понял, жду возвращения')
+    mini_break_message = f'Объявлен мини-перерыв, жду возвращения'
+    update.callback_query.edit_message_text(text=mini_break_message)

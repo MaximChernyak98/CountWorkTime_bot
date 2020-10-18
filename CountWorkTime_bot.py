@@ -43,6 +43,9 @@ def main():
 
         dp.add_handler(CallbackQueryHandler(handlers.end_of_day, pattern='end_workday'))
         dp.add_handler(CallbackQueryHandler(handlers.mini_break, pattern='mini_break'))
+        dp.add_handler(CallbackQueryHandler(handlers.rest, pattern='rest'))
+        dp.add_handler(CallbackQueryHandler(handlers.work_issue, pattern='work_issue'))
+        dp.add_handler(CallbackQueryHandler(handlers.dinner, pattern='dinner'))
 
         mybot.start_polling()
         states_from_previous_iteration = set_states_current_iteration(states_from_previous_iteration)
