@@ -27,16 +27,33 @@ def send_left_from_workspace_message():
 def send_return_to_workspace_message():
     # buttons_text_list ('button_text', 'button_callback_data')
     buttons_text_list = [('Отдых', 'rest'),
-                         ('Рабочий вопрос', 'rest'),
-                         ('Обед', 'rest')]
+                         ('Рабочий вопрос', 'work'),
+                         ('Обед', 'dinner')]
     message = 'Снова тебя вижу, по какому вопросу отходил?'
     print_message_with_keyboard(message, buttons_text_list)
 
 
 def rest_message(update, context):
+    pushed_button = ''
+    buttons_text_list = []
+    message = ''
+    pushed_button = update.callback_query.data
+
     # buttons_text_list ('button_text', 'button_callback_data')
-    buttons_text_list = [('Все время отдыхал', 'full_rest'),
-                         ('Еще и поработал', 'partial_rest')]
-    message = 'Все ли время отдыхал или удалось порешать рабочие вопросики?'
+    if pushed_button == 'rest':
+        buttons_text_list = [('Все время отдыхал', 'full_rest'),
+                             ('Еще и поработал', 'partial_rest')]
+        message = 'Все ли время отдыхал или удалось порешать рабочие вопросики?'
+        settings.REST_TIME_TYPE = 'rest'
+    elif pushed_button == 'work':
+        buttons_text_list = [('Все время работал', 'full_rest'),
+                             ('Еще и вафлил', 'partial_rest')]
+        message = 'Все ли время посвятил рабочему вопросу?'
+        settings.REST_TIME_TYPE = 'work'
+    else:
+        buttons_text_list = [('Все время ел', 'full_rest'),
+                             ('Еще и поработал', 'partial_rest')]
+        message = 'Все ли время посвятил обеду или обкашливал рабочие вопросы?'
+        settings.REST_TIME_TYPE = 'dinner'
     print_message_with_keyboard(message, buttons_text_list)
     return 'wait_answer'

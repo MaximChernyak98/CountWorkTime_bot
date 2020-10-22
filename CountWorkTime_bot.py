@@ -34,7 +34,7 @@ def main():
     dp = settings.MYBOT.dispatcher
 
     rest_conversation = ConversationHandler(
-        entry_points=[CallbackQueryHandler(dialogues.rest_message, pattern='rest')],
+        entry_points=[CallbackQueryHandler(dialogues.rest_message, pattern='^(rest|work|dinner)$')],
         states={'wait_answer': [CallbackQueryHandler(rest_dialogues.full_rest, pattern='full_rest'),
                                 CallbackQueryHandler(rest_dialogues.part_rest, pattern='partial_rest')],
                 'get_percent': [MessageHandler(Filters.regex('^\d+$'), rest_dialogues.count_rest_part)]

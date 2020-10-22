@@ -4,6 +4,8 @@ import config
 
 MYBOT = Updater(token=config.TOKEN, use_context=True)
 
+REST_TIME_TYPE = 'rest'
+
 IS_MAN_AT_WORKPLACE = False
 IS_WORKDAY_STARTED = False
 
