@@ -15,3 +15,5 @@ SECONDS_TO_BREAK = 2
 LAST_TIME_STAMP = datetime.now()
 SUMMARY_WORK_TIME = timedelta()
 SUMMARY_BREAK_TIME = timedelta()
+SUMMARY_DINNER_TIME = timedelta()
+RAW_BREAK_TIME = timedelta()

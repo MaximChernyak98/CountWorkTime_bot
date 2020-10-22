@@ -7,10 +7,13 @@ from telegram import ReplyKeyboardMarkup
 def full_rest(update, context):
     if settings.REST_TIME_TYPE == 'rest':
         settings.MYBOT.bot.send_message(chat_id=config.CHAT_ID, text='Посчитал все в перерыв')
+        settings.SUMMARY_BREAK_TIME += settings.RAW_BREAK_TIME
     elif settings.REST_TIME_TYPE == 'work':
         settings.MYBOT.bot.send_message(chat_id=config.CHAT_ID, text='Посчитал все в рабочее время')
+        settings.SUMMARY_WORK_TIME += settings.RAW_BREAK_TIME
     else:
         settings.MYBOT.bot.send_message(chat_id=config.CHAT_ID, text='Посчитал все в обед')
+        settings.SUMMARY_DINNER_TIME += settings.RAW_BREAK_TIME
     return ConversationHandler.END
 
 
@@ -30,12 +33,20 @@ def part_rest(update, context):
 
 
 def count_rest_part(update, context):
-    if 1 < int(update.message.text) < 100:
-        a = update.message.text
-        if settings.REST_TIME_TYPE == 'rest' or settings.REST_TIME_TYPE == 'dinner':
-            update.message.reply_text(text=f'Записал {a} % в рабочее время')
+    percent = int(update.message.text)
+    if 1 < percent < 100:
+        if settings.REST_TIME_TYPE == 'rest':
+            settings.SUMMARY_WORK_TIME += settings.RAW_BREAK_TIME * percent / 100
+            settings.SUMMARY_BREAK_TIME += settings.RAW_BREAK_TIME * (100 - percent) / 100
+            update.message.reply_text(text=f'Записал {percent} % в рабочее время')
+        elif settings.REST_TIME_TYPE == 'work':
+            settings.SUMMARY_WORK_TIME += settings.RAW_BREAK_TIME * percent / 100
+            settings.SUMMARY_BREAK_TIME += settings.RAW_BREAK_TIME * (100 - percent) / 100
+            update.message.reply_text(text=f'Записал {percent} % в отдых')
         else:
-            update.message.reply_text(text=f'Записал {a} % в отдых')
+            settings.SUMMARY_WORK_TIME += settings.RAW_BREAK_TIME * percent / 100
+            settings.SUMMARY_DINNER_TIME += settings.RAW_BREAK_TIME * (100 - percent) / 100
+            update.message.reply_text(text=f'Записал {percent} % в рабочее время')
         return ConversationHandler.END
     else:
         update.message.reply_text(text=f'Введи, пожалуйста, число от 1 до 99')
