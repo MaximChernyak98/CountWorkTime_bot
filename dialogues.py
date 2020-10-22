@@ -27,8 +27,8 @@ def send_left_from_workspace_message():
 def send_return_to_workspace_message():
     # buttons_text_list ('button_text', 'button_callback_data')
     buttons_text_list = [('Отдых', 'rest'),
-                         ('Рабочий вопрос', 'work_issue'),
-                         ('Обед', 'dinner')]
+                         ('Рабочий вопрос', 'rest'),
+                         ('Обед', 'rest')]
     message = 'Снова тебя вижу, по какому вопросу отходил?'
     print_message_with_keyboard(message, buttons_text_list)
 
