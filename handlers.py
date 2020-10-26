@@ -1,5 +1,4 @@
 import settings
-import config
 
 
 def end_of_day(update, context):
@@ -15,5 +14,5 @@ def end_of_day(update, context):
 
 def mini_break(update, context):
     update.callback_query.answer('Понял, жду возвращения')
-    mini_break_message = f'Объявлен мини-перерыв, жду возвращения'
+    mini_break_message = 'Объявлен мини-перерыв, жду возвращения'
     update.callback_query.edit_message_text(text=mini_break_message)

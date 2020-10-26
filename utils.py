@@ -4,7 +4,6 @@ import cv2
 import sys
 
 import settings
-import config
 import dialogues
 
 

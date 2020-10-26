@@ -19,8 +19,8 @@ def full_rest(update, context):
 
 def part_rest(update, context):
     reply_keyboard = [["10", "30", "50", "70", "90"]]
-    reply_text = ''
-
+    reply_text = None
+    
     if settings.REST_TIME_TYPE == 'rest' or settings.REST_TIME_TYPE == 'dinner':
         reply_text = 'Введи процент рабочего времени'
     else:

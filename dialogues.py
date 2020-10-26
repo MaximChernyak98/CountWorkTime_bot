@@ -34,9 +34,8 @@ def send_return_to_workspace_message():
 
 
 def rest_message(update, context):
-    pushed_button = ''
     buttons_text_list = []
-    message = ''
+    message = None
     pushed_button = update.callback_query.data
 
     # buttons_text_list ('button_text', 'button_callback_data')
