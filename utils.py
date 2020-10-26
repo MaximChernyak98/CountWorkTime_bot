@@ -4,6 +4,7 @@ import cv2
 import sys
 
 import settings
+import dialogues
 
 
 def start_caption_frame():
@@ -51,13 +52,16 @@ def count_job_detection(number_of_face_occurrences, number_job_detection):
 def count_work_intervals(states_from_previous_iteration):
     if (not states_from_previous_iteration['start_work']) and settings.IS_WORKDAY_STARTED:
         settings.LAST_TIME_STAMP = datetime.now()
+        dialogues.print_first_message()
     if states_from_previous_iteration['start_work']:
         # only if man return to workplace
         if (not states_from_previous_iteration['man_at_work']) and settings.IS_MAN_AT_WORKPLACE:
             calculate_period_time(is_return_from_break=True)
             settings.LAST_TIME_STAMP = datetime.now()
+            dialogues.send_return_to_workspace_message()
         # only if man go for break
         if states_from_previous_iteration['man_at_work'] and not settings.IS_MAN_AT_WORKPLACE:
+            dialogues.send_left_from_workspace_message()
             calculate_period_time(is_return_from_break=False)
             settings.LAST_TIME_STAMP = datetime.now()
 
@@ -72,7 +76,7 @@ def calculate_period_time(is_return_from_break=False):
     period_time = datetime.now() - settings.LAST_TIME_STAMP
     if is_return_from_break:
         period_time += timedelta(seconds=settings.SECONDS_TO_BREAK)
-        settings.SUMMARY_BREAK_TIME += period_time
+        settings.RAW_BREAK_TIME = period_time
     else:
         period_time += timedelta(seconds=settings.SECONDS_TO_START_WORK)
         settings.SUMMARY_WORK_TIME += period_time
