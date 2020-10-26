@@ -1,8 +1,6 @@
-import cv2
-import logging, datetime
+import logging
 
 from telegram.ext import (
-    Updater,
     MessageHandler,
     Filters,
     CallbackQueryHandler,
@@ -19,7 +17,6 @@ from utils import (
 
 import handlers
 import settings
-import config
 import dialogues
 import rest_dialogues
 
@@ -51,14 +48,11 @@ def main():
         number_of_face_occurrences = search_faces_in_frames(face_cascade, video_for_caption)
         number_job_detection = count_job_detection(number_of_face_occurrences, number_job_detection)
         count_work_intervals(states_from_previous_iteration)
-
         dp.add_handler(CallbackQueryHandler(handlers.end_of_day, pattern='end_workday'))
         dp.add_handler(CallbackQueryHandler(handlers.mini_break, pattern='mini_break'))
         dp.add_handler(rest_conversation)
-
         settings.MYBOT.start_polling()
         states_from_previous_iteration = set_states_current_iteration(states_from_previous_iteration)
-
 
 
 if __name__ == '__main__':
