@@ -4,7 +4,8 @@ from telegram.ext import (
     MessageHandler,
     Filters,
     CallbackQueryHandler,
-    ConversationHandler
+    ConversationHandler,
+    CommandHandler
 )
 
 from utils import (
@@ -48,6 +49,7 @@ def main():
         number_of_face_occurrences = search_faces_in_frames(face_cascade, video_for_caption)
         number_job_detection = count_job_detection(number_of_face_occurrences, number_job_detection)
         count_work_intervals(states_from_previous_iteration)
+        dp.add_handler(CommandHandler('Start', handlers.greeting))
         dp.add_handler(CallbackQueryHandler(handlers.end_of_day, pattern='end_workday'))
         dp.add_handler(CallbackQueryHandler(handlers.mini_break, pattern='mini_break'))
         dp.add_handler(rest_conversation)

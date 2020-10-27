@@ -80,3 +80,11 @@ def calculate_period_time(is_return_from_break=False):
     else:
         period_time += timedelta(seconds=settings.SECONDS_TO_START_WORK)
         settings.SUMMARY_WORK_TIME += period_time
+
+def timedelta_to_time_string(timedelta_period):
+    days, seconds = timedelta_period.days, timedelta_period.seconds
+    hours = days * 24 + seconds // 3600
+    minutes = (seconds % 3600) // 60
+    seconds = seconds % 60
+    result_string = f'{hours} часов, {minutes} минут, {seconds} секунд'
+    return result_string
