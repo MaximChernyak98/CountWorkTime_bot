@@ -9,15 +9,12 @@ def full_rest(update, context):
     type_rest = None
     if settings.REST_TIME_TYPE == 'rest':
         settings.SUMMARY_BREAK_TIME += settings.RAW_BREAK_TIME
-        update.callback_query.answer('Посчитал все в перерыв')
         type_rest = 'в перерыв'
     elif settings.REST_TIME_TYPE == 'work':
         settings.SUMMARY_WORK_TIME += settings.RAW_BREAK_TIME
-        update.callback_query.answer('Посчитал все в рабочее')
         type_rest = 'в рабочее время'
     else:
         settings.SUMMARY_DINNER_TIME += settings.RAW_BREAK_TIME
-        update.callback_query.answer('Посчитал все в обед')
         type_rest = 'в обед'
     break_time_message = utils.timedelta_to_time_string(settings.RAW_BREAK_TIME)
     update.callback_query.edit_message_text(text=f'Добавлено {break_time_message} {type_rest}')
@@ -42,38 +39,35 @@ def part_rest(update, context):
     return 'get_percent'
 
 
+def prepare_part_time_for_print(percent):
+    first_part_time = settings.RAW_BREAK_TIME * percent / 100
+    second_part_time = settings.RAW_BREAK_TIME * (100 - percent) / 100
+    first_part_message = utils.timedelta_to_time_string(first_part_time)
+    second_part_message = utils.timedelta_to_time_string(second_part_time)
+    return first_part_time, first_part_message, second_part_time, second_part_message
+
+
 def count_rest_part(update, context):
     percent = int(update.message.text)
-    first_part_time = None
-    second_part_time = None
-    first_part_message = None
-    second_part_message = None
     if 1 < percent < 100:
+        first_time, first_message, second_time, second_message = prepare_part_time_for_print(percent)
         if settings.REST_TIME_TYPE == 'rest':
-            first_part_time = settings.RAW_BREAK_TIME * percent / 100
-            settings.SUMMARY_WORK_TIME += first_part_time
-            first_part_message = utils.timedelta_to_time_string(first_part_time) + 'в рабочее время'
-            second_part_time = settings.RAW_BREAK_TIME * (100 - percent) / 100
-            settings.SUMMARY_BREAK_TIME += second_part_time
-            second_part_message = utils.timedelta_to_time_string(second_part_time) + 'в отдых'
+            settings.SUMMARY_WORK_TIME += first_time
+            first_message += ' в рабочее время'
+            settings.SUMMARY_BREAK_TIME += second_time
+            second_message += ' в отдых'
         elif settings.REST_TIME_TYPE == 'work':
-            first_part_time = settings.RAW_BREAK_TIME * percent / 100
-            settings.SUMMARY_WORK_TIME += first_part_time
-            first_part_message = utils.timedelta_to_time_string(first_part_time) + 'в отдых'
-            second_part_time = settings.RAW_BREAK_TIME * (100 - percent) / 100
-            settings.SUMMARY_BREAK_TIME += second_part_time
-            second_part_message = utils.timedelta_to_time_string(second_part_time) + 'в рабочее время'
+            settings.SUMMARY_WORK_TIME += first_time
+            first_message += ' в отдых'
+            settings.SUMMARY_BREAK_TIME += second_time
+            second_message += ' в рабочее время'
         else:
-            first_part_time = settings.RAW_BREAK_TIME * percent / 100
-            settings.SUMMARY_WORK_TIME += first_part_time
-            first_part_message = utils.timedelta_to_time_string(first_part_time) + 'в рабочее время'
-            second_part_time = settings.RAW_BREAK_TIME * (100 - percent) / 100
-            settings.SUMMARY_BREAK_TIME += second_part_time
-            second_part_message = utils.timedelta_to_time_string(second_part_time) + 'в обед'
-        part_rest_message = f'Записал:\n{first_part_time} % в {first_part_message}' \
-                            f'\n{second_part_time} % в {second_part_message}'
-        update.message.reply_text(text=part_rest_message,
-                                  reply_markup=ReplyKeyboardRemove())
+            settings.SUMMARY_WORK_TIME += first_time
+            first_message += ' в рабочее время'
+            settings.SUMMARY_DINNER_TIME += second_time
+            second_message += ' в обед'
+        part_rest_message = f'Записал:\n{first_message}\n{second_message}'
+        update.message.reply_text(text=part_rest_message, reply_markup=ReplyKeyboardRemove())
         return ConversationHandler.END
     else:
         update.message.reply_text(text=f'Введи, пожалуйста, число от 1 до 99')
