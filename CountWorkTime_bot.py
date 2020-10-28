@@ -37,7 +37,7 @@ def main():
                                 CallbackQueryHandler(rest_dialogues.part_rest, pattern='partial_rest')],
                 'get_percent': [MessageHandler(Filters.regex('^\d+$'), rest_dialogues.count_rest_part)]
                 },
-        fallbacks=[]
+        fallbacks=[MessageHandler(Filters.all, dialogues.print_rest_fallback)]
     )
 
     number_job_detection = 0

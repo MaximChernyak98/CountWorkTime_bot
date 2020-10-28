@@ -20,7 +20,7 @@ def send_left_from_workspace_message():
     # buttons_text_list ('button_text', 'button_callback_data')
     buttons_text_list = [('Рабочий день закончен', 'end_workday'),
                          ('Отошел, но еще вернусь', 'mini_break')]
-    message = 'Снова тебя вижу, по какому вопросу отходил?'
+    message = 'Пропал с радаров, рабочий день закончен или перерыв?'
     print_message_with_keyboard(message, buttons_text_list)
 
 
@@ -58,3 +58,7 @@ def rest_message(update, context):
         settings.REST_TIME_TYPE = 'dinner'
     print_message_with_keyboard(question_message, buttons_text_list)
     return 'wait_answer'
+
+
+def print_rest_fallback(update, context):
+    update.message.reply_text('Просто пришли цифру от 1 до 99, не выделывайся:)')
