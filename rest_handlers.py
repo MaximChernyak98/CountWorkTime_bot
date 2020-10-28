@@ -39,18 +39,10 @@ def part_rest(update, context):
     return 'get_percent'
 
 
-def prepare_part_time_for_print(percent):
-    first_part_time = settings.RAW_BREAK_TIME * percent / 100
-    second_part_time = settings.RAW_BREAK_TIME * (100 - percent) / 100
-    first_part_message = utils.timedelta_to_time_string(first_part_time)
-    second_part_message = utils.timedelta_to_time_string(second_part_time)
-    return first_part_time, first_part_message, second_part_time, second_part_message
-
-
 def count_rest_part(update, context):
     percent = int(update.message.text)
     if 1 < percent < 100:
-        first_time, first_message, second_time, second_message = prepare_part_time_for_print(percent)
+        first_time, first_message, second_time, second_message = utils.prepare_part_time_for_print(percent)
         if settings.REST_TIME_TYPE == 'rest':
             settings.SUMMARY_WORK_TIME += first_time
             first_message += ' в рабочее время'

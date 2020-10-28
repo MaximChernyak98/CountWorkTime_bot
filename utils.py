@@ -89,3 +89,11 @@ def timedelta_to_time_string(timedelta_period):
     seconds = seconds % 60
     result_string = f'{hours} часов, {minutes} минут, {seconds} секунд'
     return result_string
+
+
+def prepare_part_time_for_print(percent):
+    first_part_time = settings.RAW_BREAK_TIME * percent / 100
+    second_part_time = settings.RAW_BREAK_TIME * (100 - percent) / 100
+    first_part_message = timedelta_to_time_string(first_part_time)
+    second_part_message = timedelta_to_time_string(second_part_time)
+    return first_part_time, first_part_message, second_part_time, second_part_message
