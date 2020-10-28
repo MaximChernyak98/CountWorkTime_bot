@@ -20,7 +20,7 @@ def send_left_from_workspace_message():
     # buttons_text_list ('button_text', 'button_callback_data')
     buttons_text_list = [('Рабочий день закончен', 'end_workday'),
                          ('Отошел, но еще вернусь', 'mini_break')]
-    message = 'Снова тебя вижу, по какому вопросу отходил?'
+    message = 'Пропал с радаров, рабочий день закончен или перерыв?'
     print_message_with_keyboard(message, buttons_text_list)
 
 
@@ -35,24 +35,30 @@ def send_return_to_workspace_message():
 
 def rest_message(update, context):
     buttons_text_list = []
-    message = None
+    question_message = None
     pushed_button = update.callback_query.data
+    settings.MYBOT.bot.delete_message(chat_id=config.CHAT_ID,
+                                      message_id=update.callback_query.message.message_id)
 
     # buttons_text_list ('button_text', 'button_callback_data')
     if pushed_button == 'rest':
         buttons_text_list = [('Все время отдыхал', 'full_rest'),
                              ('Еще и поработал', 'partial_rest')]
-        message = 'Все ли время отдыхал или удалось порешать рабочие вопросики?'
+        question_message = 'Все ли время отдыхал или удалось порешать рабочие вопросики?'
         settings.REST_TIME_TYPE = 'rest'
     elif pushed_button == 'work':
         buttons_text_list = [('Все время работал', 'full_rest'),
                              ('Еще и вафлил', 'partial_rest')]
-        message = 'Все ли время посвятил рабочему вопросу?'
+        question_message = 'Все ли время посвятил рабочему вопросу?'
         settings.REST_TIME_TYPE = 'work'
     else:
         buttons_text_list = [('Все время ел', 'full_rest'),
                              ('Еще и поработал', 'partial_rest')]
-        message = 'Все ли время посвятил обеду или обкашливал рабочие вопросы?'
+        question_message = 'Все ли время посвятил обеду или обкашливал рабочие вопросы?'
         settings.REST_TIME_TYPE = 'dinner'
-    print_message_with_keyboard(message, buttons_text_list)
+    print_message_with_keyboard(question_message, buttons_text_list)
     return 'wait_answer'
+
+
+def print_rest_fallback(update, context):
+    update.message.reply_text('Просто пришли цифру от 1 до 99, не выделывайся:)')

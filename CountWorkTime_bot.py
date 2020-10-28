@@ -4,7 +4,8 @@ from telegram.ext import (
     MessageHandler,
     Filters,
     CallbackQueryHandler,
-    ConversationHandler
+    ConversationHandler,
+    CommandHandler
 )
 
 from utils import (
@@ -36,7 +37,7 @@ def main():
                                 CallbackQueryHandler(rest_dialogues.part_rest, pattern='partial_rest')],
                 'get_percent': [MessageHandler(Filters.regex('^\d+$'), rest_dialogues.count_rest_part)]
                 },
-        fallbacks=[]
+        fallbacks=[MessageHandler(Filters.all, dialogues.print_rest_fallback)]
     )
 
     number_job_detection = 0
@@ -48,6 +49,7 @@ def main():
         number_of_face_occurrences = search_faces_in_frames(face_cascade, video_for_caption)
         number_job_detection = count_job_detection(number_of_face_occurrences, number_job_detection)
         count_work_intervals(states_from_previous_iteration)
+        dp.add_handler(CommandHandler('Start', handlers.greeting))
         dp.add_handler(CallbackQueryHandler(handlers.end_of_day, pattern='end_workday'))
         dp.add_handler(CallbackQueryHandler(handlers.mini_break, pattern='mini_break'))
         dp.add_handler(rest_conversation)
