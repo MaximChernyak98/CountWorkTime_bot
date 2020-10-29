@@ -1,7 +1,10 @@
+import datetime
+
 import settings
 import config
 import utils
 import dialogues
+import google_spreadsheet
 
 
 def greeting(update, context):
@@ -52,8 +55,15 @@ def end_of_day(update, context):
     update.callback_query.answer('Рабочий день закончен!')
     end_of_day_message = f'''
 Поздравляю с окончанием рабочего дня!\nРезультат на сегодня:
-Рабочее время - {utils.timedelta_to_time_string(settings.SUMMARY_WORK_TIME)};
-Время перерывов - {utils.timedelta_to_time_string(settings.SUMMARY_BREAK_TIME)}
-Время обеда - {utils.timedelta_to_time_string(settings.SUMMARY_DINNER_TIME)}
+Рабочее время - {utils.timedelta_to_time_string(settings.SUMMARY_WORK_TIME, full_format=True)};
+# Время перерывов - {utils.timedelta_to_time_string(settings.SUMMARY_BREAK_TIME, full_format=True)}
+# Время обеда - {utils.timedelta_to_time_string(settings.SUMMARY_DINNER_TIME, full_format=True)}
 '''
     update.callback_query.edit_message_text(text=end_of_day_message)
+    if settings.USE_GOOGLE_SPREADSHEET:
+        date = datetime.datetime.today().strftime('%d.%m.%Y')
+        work_time = utils.timedelta_to_time_string(settings.SUMMARY_WORK_TIME, full_format=False)
+        break_time = utils.timedelta_to_time_string(settings.SUMMARY_BREAK_TIME, full_format=False)
+        dinner_time = utils.timedelta_to_time_string(settings.SUMMARY_DINNER_TIME, full_format=False)
+        new_row = [date, work_time, break_time, dinner_time]
+        google_spreadsheet.GOOGLE_WORKSHEET.append_row(new_row)

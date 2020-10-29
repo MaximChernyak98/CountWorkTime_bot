@@ -82,18 +82,21 @@ def calculate_period_time(is_return_from_break=False):
         settings.SUMMARY_WORK_TIME += period_time
 
 
-def timedelta_to_time_string(timedelta_period):
+def timedelta_to_time_string(timedelta_period, full_format):
     days, seconds = timedelta_period.days, timedelta_period.seconds
     hours = days * 24 + seconds // 3600
     minutes = (seconds % 3600) // 60
     seconds = seconds % 60
-    result_string = f'{hours} часов, {minutes} минут, {seconds} секунд'
+    if full_format:
+        result_string = f'{hours} часов, {minutes} минут, {seconds} секунд'
+    else:
+        result_string = f'{hours}:{minutes}:{seconds}'
     return result_string
 
 
 def prepare_part_time_for_print(percent):
     first_part_time = settings.RAW_BREAK_TIME * percent / 100
     second_part_time = settings.RAW_BREAK_TIME * (100 - percent) / 100
-    first_part_message = timedelta_to_time_string(first_part_time)
-    second_part_message = timedelta_to_time_string(second_part_time)
+    first_part_message = timedelta_to_time_string(first_part_time, full_format=True)
+    second_part_message = timedelta_to_time_string(second_part_time, full_format=True)
     return first_part_time, first_part_message, second_part_time, second_part_message

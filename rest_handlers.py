@@ -16,7 +16,7 @@ def full_rest(update, context):
     else:
         settings.SUMMARY_DINNER_TIME += settings.RAW_BREAK_TIME
         type_rest = 'в обед'
-    break_time_message = utils.timedelta_to_time_string(settings.RAW_BREAK_TIME)
+    break_time_message = utils.timedelta_to_time_string(settings.RAW_BREAK_TIME, full_format=True)
     update.callback_query.edit_message_text(text=f'Добавлено {break_time_message} {type_rest}')
     return ConversationHandler.END
 
