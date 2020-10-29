@@ -1,13 +1,14 @@
+import datetime
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup
+
 import config
 import settings
 import utils
 import google_spreadsheet
 
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup
-
 
 def form_main_keyboard():
-    keyboard_buttons = [["Продолжить работу", "Завершить работу", "Результаты дня"]]
+    keyboard_buttons = [["Завершить работу", "Результаты дня"]]
     main_keyboard = ReplyKeyboardMarkup(keyboard_buttons, resize_keyboard=True)
     return main_keyboard
 
@@ -42,19 +43,19 @@ def send_return_to_workspace_message():
     print_message_with_keyboard(message, buttons_text_list)
 
 
-def send_end_of_day_message(*args):
+def send_end_of_day_message():
     end_of_day_message = f'''
 Поздравляю с окончанием рабочего дня!\nРезультат на сегодня:
 Рабочее время - {utils.timedelta_to_time_string(settings.SUMMARY_WORK_TIME, full_format=True)};
 Время перерывов - {utils.timedelta_to_time_string(settings.SUMMARY_BREAK_TIME, full_format=True)}
 Время обеда - {utils.timedelta_to_time_string(settings.SUMMARY_DINNER_TIME, full_format=True)}
 '''
-    settings.MYBOT.bot.send_message(chat_id=config.CHAT_ID, text=end_of_day_message)
     if settings.USE_GOOGLE_SPREADSHEET:
+        time = datetime.datetime.now().strftime('%H:%M:%S')
         date = datetime.datetime.today().strftime('%d.%m.%Y')
         work_time = utils.timedelta_to_time_string(settings.SUMMARY_WORK_TIME, full_format=False)
         break_time = utils.timedelta_to_time_string(settings.SUMMARY_BREAK_TIME, full_format=False)
         dinner_time = utils.timedelta_to_time_string(settings.SUMMARY_DINNER_TIME, full_format=False)
-        new_row = [date, work_time, break_time, dinner_time]
+        new_row = [time, date, work_time, break_time, dinner_time]
         google_spreadsheet.GOOGLE_WORKSHEET.append_row(new_row)
     return end_of_day_message

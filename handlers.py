@@ -13,6 +13,7 @@ def greeting(update, context):
 и время отдыха. Включи камеру и я начну работу'''
     update.message.reply_text(message)
 
+
 def cheat_code(update, context):
     settings.SUMMARY_WORK_TIME = settings.HOURS_FOR_WORK_AT_DAY + datetime.timedelta(minutes=1)
 
@@ -55,9 +56,17 @@ def print_rest_fallback(update, context):
 
 
 def end_of_day(update, context):
-    update.callback_query.answer('Рабочий день закончен!')
     end_of_day_message = dialogues.send_end_of_day_message()
-    update.callback_query.edit_message_text(text=end_of_day_message)
+    if update.callback_query == None:
+        settings.MYBOT.bot.send_message(chat_id=config.CHAT_ID, text=end_of_day_message)
+    else:
+        update.callback_query.edit_message_text(text=end_of_day_message)
+    settings.SUMMARY_WORK_TIME = datetime.timedelta()
+    settings.SUMMARY_BREAK_TIME = datetime.timedelta()
+    settings.SUMMARY_DINNER_TIME = datetime.timedelta()
+    settings.RAW_BREAK_TIME = datetime.timedelta()
+    settings.IS_MAN_AT_WORKPLACE = False
+    settings.IS_WORKDAY_STARTED = False
 
 
 def current_result_of_day(update, context):

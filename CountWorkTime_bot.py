@@ -62,7 +62,7 @@ def main():
         dp.add_handler(CommandHandler('Cheat', cheat_code))
         dp.add_handler(CallbackQueryHandler(end_of_day, pattern='end_workday'))
         dp.add_handler(CallbackQueryHandler(mini_break, pattern='mini_break'))
-        dp.add_handler(MessageHandler(Filters.regex('^(Завершить работу)$'), send_end_of_day_message))
+        dp.add_handler(MessageHandler(Filters.regex('^(Завершить работу)$'), end_of_day))
         dp.add_handler(MessageHandler(Filters.regex('^(Результаты дня)$'), current_result_of_day))
         dp.add_handler(rest_conversation)
 
