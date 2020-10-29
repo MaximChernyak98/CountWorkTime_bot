@@ -10,7 +10,7 @@ import dialogues
 def start_caption_frame():
     current_dir = os.path.dirname(__file__)
     face_cascade_xml = 'haarcascade_frontalface_default.xml'
-    path_to_face_cascade = os.path.join(current_dir, 'cascades', 'data', face_cascade_xml)
+    path_to_face_cascade = os.path.join(current_dir, 'cascades', face_cascade_xml)
     if os.path.isfile(path_to_face_cascade):
         face_cascade = cv2.CascadeClassifier(path_to_face_cascade)
         video_capture = cv2.VideoCapture(0)
