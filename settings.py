@@ -4,6 +4,8 @@ import config
 
 MYBOT = Updater(token=config.TOKEN, use_context=True)
 
+USE_GOOGLE_SPREADSHEET = False
+
 REST_TIME_TYPE = 'rest'
 
 IS_MAN_AT_WORKPLACE = False
