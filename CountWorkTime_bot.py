@@ -1,4 +1,5 @@
 import logging
+import time
 
 from telegram.ext import (
     MessageHandler,
@@ -28,6 +29,7 @@ from handlers import (
 
 from rest_handlers import full_rest, part_rest, count_rest_part
 from settings import MYBOT
+import config
 from dialogues import send_end_of_day_message
 
 logging.basicConfig(
@@ -39,6 +41,7 @@ logging.basicConfig(
 
 def main():
     dp = MYBOT.dispatcher
+    MYBOT.start_polling()
 
     rest_conversation = ConversationHandler(
         entry_points=[CallbackQueryHandler(rest_message, pattern='^(rest|work|dinner)$')],
@@ -66,7 +69,7 @@ def main():
         dp.add_handler(MessageHandler(Filters.regex('^(Результаты дня)$'), current_result_of_day))
         dp.add_handler(rest_conversation)
 
-        MYBOT.start_polling()
+
         states_from_previous_iteration = set_states_current_iteration(states_from_previous_iteration)
 
 
