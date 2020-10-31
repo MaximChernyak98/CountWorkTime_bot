@@ -9,6 +9,7 @@ cascades/
 *.png
 test.py
 credentials.json
+*.bat
 
 
 # Byte-compiled / optimized / DLL files

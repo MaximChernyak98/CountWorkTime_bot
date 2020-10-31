@@ -8,8 +8,6 @@ import dialogues
 
 def greeting(update, context):
     config.CHAT_ID = update.message.chat.id
-    print(update.message.chat.id)
-    print(config.CHAT_ID)
     message = '''Привет! Я бот, который поможет тебе подсчитать рабочее время \
 и время отдыха. Включи камеру и я начну работу'''
     update.message.reply_text(message)
