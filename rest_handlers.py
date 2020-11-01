@@ -1,6 +1,7 @@
 import settings
 import config
 import utils
+from dialogues import form_main_keyboard
 from telegram.ext import ConversationHandler
 from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove
 
@@ -59,7 +60,7 @@ def count_rest_part(update, context):
             settings.SUMMARY_DINNER_TIME += second_time
             second_message += ' в обед'
         part_rest_message = f'Записал:\n{first_message}\n{second_message}'
-        update.message.reply_text(text=part_rest_message, reply_markup=ReplyKeyboardRemove())
+        update.message.reply_text(text=part_rest_message, reply_markup=form_main_keyboard())
         return ConversationHandler.END
     else:
         update.message.reply_text(text=f'Введи, пожалуйста, число от 1 до 99')

@@ -1,4 +1,5 @@
 import logging
+import time
 
 from telegram.ext import (
     MessageHandler,
@@ -16,9 +17,21 @@ from utils import (
     set_states_current_iteration
 )
 
+from handlers import (
+    greeting,
+    rest_message,
+    print_rest_fallback,
+    end_of_day,
+    mini_break,
+    current_result_of_day,
+    cheat_code
+)
+
 from rest_handlers import full_rest, part_rest, count_rest_part
-from handlers import greeting, rest_message, print_rest_fallback, end_of_day, mini_break
 from settings import MYBOT
+import config
+import initialization
+from dialogues import send_end_of_day_message
 
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -29,6 +42,7 @@ logging.basicConfig(
 
 def main():
     dp = MYBOT.dispatcher
+    initialization.initialization(dp)
 
     rest_conversation = ConversationHandler(
         entry_points=[CallbackQueryHandler(rest_message, pattern='^(rest|work|dinner)$')],
@@ -49,11 +63,13 @@ def main():
         count_work_intervals(states_from_previous_iteration)
 
         dp.add_handler(CommandHandler('Start', greeting))
+        dp.add_handler(CommandHandler('Cheat', cheat_code))
         dp.add_handler(CallbackQueryHandler(end_of_day, pattern='end_workday'))
         dp.add_handler(CallbackQueryHandler(mini_break, pattern='mini_break'))
+        dp.add_handler(MessageHandler(Filters.regex('^(Завершить работу)$'), end_of_day))
+        dp.add_handler(MessageHandler(Filters.regex('^(Результаты дня)$'), current_result_of_day))
         dp.add_handler(rest_conversation)
 
-        MYBOT.start_polling()
         states_from_previous_iteration = set_states_current_iteration(states_from_previous_iteration)
 
 

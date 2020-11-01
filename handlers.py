@@ -4,7 +4,6 @@ import settings
 import config
 import utils
 import dialogues
-import google_spreadsheet
 
 
 def greeting(update, context):
@@ -12,6 +11,10 @@ def greeting(update, context):
     message = '''Привет! Я бот, который поможет тебе подсчитать рабочее время \
 и время отдыха. Включи камеру и я начну работу'''
     update.message.reply_text(message)
+
+
+def cheat_code(update, context):
+    settings.SUMMARY_WORK_TIME = settings.HOURS_FOR_WORK_AT_DAY + datetime.timedelta(minutes=1)
 
 
 def mini_break(update, context):
@@ -52,18 +55,29 @@ def print_rest_fallback(update, context):
 
 
 def end_of_day(update, context):
-    update.callback_query.answer('Рабочий день закончен!')
-    end_of_day_message = f'''
-Поздравляю с окончанием рабочего дня!\nРезультат на сегодня:
-Рабочее время - {utils.timedelta_to_time_string(settings.SUMMARY_WORK_TIME, full_format=True)};
-# Время перерывов - {utils.timedelta_to_time_string(settings.SUMMARY_BREAK_TIME, full_format=True)}
-# Время обеда - {utils.timedelta_to_time_string(settings.SUMMARY_DINNER_TIME, full_format=True)}
+    end_of_day_message = dialogues.send_end_of_day_message()
+    if update.callback_query == None:
+        settings.MYBOT.bot.send_message(chat_id=config.CHAT_ID, text=end_of_day_message)
+    else:
+        update.callback_query.edit_message_text(text=end_of_day_message)
+    settings.SUMMARY_WORK_TIME = datetime.timedelta()
+    settings.SUMMARY_BREAK_TIME = datetime.timedelta()
+    settings.SUMMARY_DINNER_TIME = datetime.timedelta()
+    settings.RAW_BREAK_TIME = datetime.timedelta()
+    settings.IS_MAN_AT_WORKPLACE = False
+    settings.IS_WORKDAY_STARTED = False
+
+
+def current_result_of_day(update, context):
+    if settings.SUMMARY_WORK_TIME > settings.HOURS_FOR_WORK_AT_DAY:
+        can_user_go_home = 'Тебя никто не осудит, если ты пойдешь домой'
+    else:
+        can_user_go_home = 'Солнце еще высоко, клубника сама себя не вырастит!:)'
+    current_result_message = f'''
+Сегодня:
+Потрачено на работу - {utils.timedelta_to_time_string(settings.SUMMARY_WORK_TIME, full_format=True)}
+Ты отдыхал - {utils.timedelta_to_time_string(settings.SUMMARY_BREAK_TIME, full_format=True)}
+Обедал - {utils.timedelta_to_time_string(settings.SUMMARY_DINNER_TIME, full_format=True)}
+{can_user_go_home}
 '''
-    update.callback_query.edit_message_text(text=end_of_day_message)
-    if settings.USE_GOOGLE_SPREADSHEET:
-        date = datetime.datetime.today().strftime('%d.%m.%Y')
-        work_time = utils.timedelta_to_time_string(settings.SUMMARY_WORK_TIME, full_format=False)
-        break_time = utils.timedelta_to_time_string(settings.SUMMARY_BREAK_TIME, full_format=False)
-        dinner_time = utils.timedelta_to_time_string(settings.SUMMARY_DINNER_TIME, full_format=False)
-        new_row = [date, work_time, break_time, dinner_time]
-        google_spreadsheet.GOOGLE_WORKSHEET.append_row(new_row)
+    update.message.reply_text(text=current_result_message)
