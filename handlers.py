@@ -74,7 +74,8 @@ def current_result_of_day(update, context):
     else:
         can_user_go_home = 'Солнце еще высоко, клубника сама себя не вырастит!:)'
     current_result_message = f'''
-Сегодня потрачено на работу - {utils.timedelta_to_time_string(settings.SUMMARY_WORK_TIME, full_format=True)};
+Сегодня:
+Потрачено на работу - {utils.timedelta_to_time_string(settings.SUMMARY_WORK_TIME, full_format=True)}
 Ты отдыхал - {utils.timedelta_to_time_string(settings.SUMMARY_BREAK_TIME, full_format=True)}
 Обедал - {utils.timedelta_to_time_string(settings.SUMMARY_DINNER_TIME, full_format=True)}
 {can_user_go_home}
