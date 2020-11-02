@@ -11,10 +11,9 @@ from utils import (
     set_states_current_iteration
 )
 
-current_dir = os.path.dirname(__file__)
 
-
-def search_faces_in_frames(face_cascade, video_for_caption, number_of_frame):
+def save_images_from_camera(face_cascade, video_for_caption, number_of_frame):
+    current_dir = os.path.dirname(__file__)
     ret, frame = video_for_caption.read()
     try:
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
@@ -32,15 +31,14 @@ def search_faces_in_frames(face_cascade, video_for_caption, number_of_frame):
     except cv2.error as e:
         if e.err == "!_src.empty()":
             sys.exit('Видеопоток не найден, проверьте подключение камеры')
-    return number_of_frame
 
 
 def main():
     face_cascade, video_for_caption = start_caption_frame()
     number_of_frame = 0
     while True:
-        number_of_frame = search_faces_in_frames(face_cascade, video_for_caption, number_of_frame)
-        print(number_of_frame)
+        save_images_from_camera(face_cascade, video_for_caption, number_of_frame)
+
 
 
 if __name__ == '__main__':
