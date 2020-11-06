@@ -1,5 +1,4 @@
 import logging
-import time
 
 from telegram.ext import (
     MessageHandler,
@@ -9,7 +8,7 @@ from telegram.ext import (
     CommandHandler
 )
 
-from utils import (
+from helpers.utils import (
     search_faces_in_frames,
     start_caption_frame,
     count_job_detection,
@@ -17,7 +16,7 @@ from utils import (
     set_states_current_iteration
 )
 
-from handlers import (
+from interaction.handlers import (
     greeting,
     rest_message,
     print_rest_fallback,
@@ -27,11 +26,14 @@ from handlers import (
     cheat_code
 )
 
-from rest_handlers import full_rest, part_rest, count_rest_part
+from interaction.rest_handlers import (
+    count_rest_part,
+    full_rest,
+    part_rest
+)
+
 from settings import MYBOT
-import config
 import initialization
-from dialogues import send_end_of_day_message
 
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',

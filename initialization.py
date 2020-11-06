@@ -2,7 +2,7 @@ import time
 from telegram.ext import MessageHandler, Filters
 from settings import MYBOT
 import config
-from handlers import greeting
+from interaction.handlers import greeting
 
 def initialization(dp):
     MYBOT.start_polling()
