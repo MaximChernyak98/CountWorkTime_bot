@@ -4,7 +4,7 @@ import config
 
 MYBOT = Updater(token=config.TOKEN, use_context=True)
 
-USE_GOOGLE_SPREADSHEET = False
+USE_GOOGLE_SPREADSHEET = True
 
 REST_TIME_TYPE = 'rest'
 
