@@ -4,13 +4,20 @@ import cv2
 import sys
 
 import settings
-import dialogues
+
+from helpers.timedelta_to_str import timedelta_to_time_string
+
+from interaction.dialogues import (
+    print_first_message,
+    send_return_to_workspace_message,
+    send_left_from_workspace_message
+)
 
 
 def start_caption_frame():
     current_dir = os.path.dirname(__file__)
     face_cascade_xml = 'haarcascade_frontalface_default.xml'
-    path_to_face_cascade = os.path.join(current_dir, 'cascades', 'data', face_cascade_xml)
+    path_to_face_cascade = os.path.join(current_dir, '..', 'cascades', face_cascade_xml)
     if os.path.isfile(path_to_face_cascade):
         face_cascade = cv2.CascadeClassifier(path_to_face_cascade)
         video_capture = cv2.VideoCapture(0)
@@ -52,16 +59,16 @@ def count_job_detection(number_of_face_occurrences, number_job_detection):
 def count_work_intervals(states_from_previous_iteration):
     if (not states_from_previous_iteration['start_work']) and settings.IS_WORKDAY_STARTED:
         settings.LAST_TIME_STAMP = datetime.now()
-        dialogues.print_first_message()
+        print_first_message()
     if states_from_previous_iteration['start_work']:
         # only if man return to workplace
         if (not states_from_previous_iteration['man_at_work']) and settings.IS_MAN_AT_WORKPLACE:
             calculate_period_time(is_return_from_break=True)
             settings.LAST_TIME_STAMP = datetime.now()
-            dialogues.send_return_to_workspace_message()
+            send_return_to_workspace_message()
         # only if man go for break
         if states_from_previous_iteration['man_at_work'] and not settings.IS_MAN_AT_WORKPLACE:
-            dialogues.send_left_from_workspace_message()
+            send_left_from_workspace_message()
             calculate_period_time(is_return_from_break=False)
             settings.LAST_TIME_STAMP = datetime.now()
 
@@ -80,3 +87,11 @@ def calculate_period_time(is_return_from_break=False):
     else:
         period_time += timedelta(seconds=settings.SECONDS_TO_START_WORK)
         settings.SUMMARY_WORK_TIME += period_time
+
+
+def prepare_part_time_for_print(percent):
+    first_part_time = settings.RAW_BREAK_TIME * percent / 100
+    second_part_time = settings.RAW_BREAK_TIME * (100 - percent) / 100
+    first_part_message = timedelta_to_time_string(first_part_time, full_format=True)
+    second_part_message = timedelta_to_time_string(second_part_time, full_format=True)
+    return first_part_time, first_part_message, second_part_time, second_part_message

@@ -7,8 +7,13 @@ config.py
 .idea/
 cascades/
 *.png
+*.jpg
 test.py
-
+credentials.json
+*.bat
+.images/
+*.pickle
+trainner.yml
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
