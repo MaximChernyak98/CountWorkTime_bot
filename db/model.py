@@ -25,8 +25,4 @@ class Times(Base):
 
 Base.metadata.create_all(engine)
 
-<<<<<<< HEAD
 #112
-=======
-#221
->>>>>>> fc22dc46e0337c4d3698f2ce576c632304934518
