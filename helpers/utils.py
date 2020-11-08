@@ -55,7 +55,6 @@ def search_faces_in_frames(face_cascades, video_for_caption):
         try:
             gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
             number_of_face_occurrences = search_face_by_cascades(gray_frame, face_cascades, number_of_face_occurrences)
-            print(number_of_face_occurrences)
         except cv2.error as e:
             if e.err == "!_src.empty()":
                 sys.exit('Видеопоток не найден, проверьте подключение камеры')
