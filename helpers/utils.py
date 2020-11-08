@@ -14,28 +14,48 @@ from interaction.dialogues import (
 )
 
 
+def get_paths_to_face_cascades(dir: str):
+    list_of_face_cascades = ['haarcascade_frontalface_default.xml', 'haarcascade_profileface.xml']
+    paths_to_face_cascades = []
+    for cascade in list_of_face_cascades:
+        path_to_current_cascade = os.path.join(dir, '..', 'cascades', cascade)
+        if os.path.isfile(path_to_current_cascade):
+            paths_to_face_cascades.append(path_to_current_cascade)
+        else:
+            print(f'Файл с шаблоном {cascade} не найден')
+    return paths_to_face_cascades
+
+
 def start_caption_frame():
     current_dir = os.path.dirname(__file__)
-    face_cascade_xml = 'haarcascade_frontalface_default.xml'
-    path_to_face_cascade = os.path.join(current_dir, '..', 'cascades', face_cascade_xml)
-    if os.path.isfile(path_to_face_cascade):
-        face_cascade = cv2.CascadeClassifier(path_to_face_cascade)
-        video_capture = cv2.VideoCapture(0)
+    paths_to_face_cascades = get_paths_to_face_cascades(current_dir)
+    face_cascades = []
+    if paths_to_face_cascades is not None:
+        for path_to_cascade in paths_to_face_cascades:
+            face_cascades.append(cv2.CascadeClassifier(path_to_cascade))
     else:
-        sys.exit(f'Файл с шаблонами {face_cascade_xml} не найден')
-    return face_cascade, video_capture
+        sys.exit(f'Ни один файл с шаблоном не был найден, проверьте наличие папки cascades')
+    video_capture = cv2.VideoCapture(0)
+    return face_cascades, video_capture
 
 
-def search_faces_in_frames(face_cascade, video_for_caption):
+def search_face_by_cascades(gray_frame, face_cascades, number_of_face_occurrences):
+    for cascade in face_cascades:
+        faces = cascade.detectMultiScale(gray_frame, scaleFactor=1.5, minNeighbors=5)
+        if len(faces) > 0:
+            number_of_face_occurrences += 1
+    return number_of_face_occurrences
+
+
+def search_faces_in_frames(face_cascades, video_for_caption):
     number_of_face_occurrences = 0
     end_capture_time = datetime.now() + timedelta(seconds=1)
     while datetime.now() < end_capture_time:
         ret, frame = video_for_caption.read()
         try:
-            gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-            faces = face_cascade.detectMultiScale(gray, scaleFactor=1.5, minNeighbors=5)
-            if len(faces) > 0:
-                number_of_face_occurrences += 1
+            gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+            number_of_face_occurrences = search_face_by_cascades(gray_frame, face_cascades, number_of_face_occurrences)
+            print(number_of_face_occurrences)
         except cv2.error as e:
             if e.err == "!_src.empty()":
                 sys.exit('Видеопоток не найден, проверьте подключение камеры')
