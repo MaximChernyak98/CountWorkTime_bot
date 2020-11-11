@@ -15,10 +15,11 @@ from interaction.dialogues import (
 
 
 def get_paths_to_face_cascades(dir: str):
-    list_of_face_cascades = ['haarcascade_frontalface_default.xml', 'haarcascade_profileface.xml']
+    list_of_face_cascades = [
+        'haarcascade_frontalface_default.xml', 'haarcascade_profileface.xml']
     paths_to_face_cascades = []
     for cascade in list_of_face_cascades:
-        path_to_current_cascade = os.path.join(dir, '..', 'cascades', cascade)
+        path_to_current_cascade = os.path.join(dir, 'cascades', cascade)
         if os.path.isfile(path_to_current_cascade):
             paths_to_face_cascades.append(path_to_current_cascade)
         else:
@@ -27,24 +28,25 @@ def get_paths_to_face_cascades(dir: str):
 
 
 def start_caption_frame():
-    current_dir = os.path.dirname(__file__)
+    current_dir = os.getcwd()
     paths_to_face_cascades = get_paths_to_face_cascades(current_dir)
     face_cascades = []
-    if paths_to_face_cascades is not None:
+    if paths_to_face_cascades:
         for path_to_cascade in paths_to_face_cascades:
             face_cascades.append(cv2.CascadeClassifier(path_to_cascade))
     else:
-        sys.exit(f'Ни один файл с шаблоном не был найден, проверьте наличие папки cascades')
+        sys.exit(f'Ни один файл с шаблоном не был найден, проверьте наличие папки cascades')  # TODO переделать в исключение
     video_capture = cv2.VideoCapture(0)
     return face_cascades, video_capture
 
 
-def search_face_by_cascades(gray_frame, face_cascades, number_of_face_occurrences):
+def search_face_by_cascades(gray_frame, face_cascades):
+    number_of_face_in_frame = 0
     for cascade in face_cascades:
         faces = cascade.detectMultiScale(gray_frame, scaleFactor=1.5, minNeighbors=5)
         if len(faces) > 0:
-            number_of_face_occurrences += 1
-    return number_of_face_occurrences
+            number_of_face_in_frame += 1
+    return number_of_face_in_frame
 
 
 def search_faces_in_frames(face_cascades, video_for_caption):
@@ -54,7 +56,7 @@ def search_faces_in_frames(face_cascades, video_for_caption):
         ret, frame = video_for_caption.read()
         try:
             gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-            number_of_face_occurrences = search_face_by_cascades(gray_frame, face_cascades, number_of_face_occurrences)
+            number_of_face_occurrences += search_face_by_cascades(gray_frame, face_cascades)
         except cv2.error as e:
             if e.err == "!_src.empty()":
                 sys.exit('Видеопоток не найден, проверьте подключение камеры')
@@ -111,6 +113,8 @@ def calculate_period_time(is_return_from_break=False):
 def prepare_part_time_for_print(percent):
     first_part_time = settings.RAW_BREAK_TIME * percent / 100
     second_part_time = settings.RAW_BREAK_TIME * (100 - percent) / 100
-    first_part_message = timedelta_to_time_string(first_part_time, full_format=True)
-    second_part_message = timedelta_to_time_string(second_part_time, full_format=True)
+    first_part_message = timedelta_to_time_string(
+        first_part_time, full_format=True)
+    second_part_message = timedelta_to_time_string(
+        second_part_time, full_format=True)
     return first_part_time, first_part_message, second_part_time, second_part_message
