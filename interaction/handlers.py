@@ -2,8 +2,8 @@ import datetime
 
 import settings
 import config
-import utils
-import dialogues
+from helpers.utils import timedelta_to_time_string
+from interaction.dialogues import print_message_with_keyboard, send_end_of_day_message
 
 
 def greeting(update, context):
@@ -46,7 +46,7 @@ def rest_message(update, context):
                              ('Еще и поработал', 'partial_rest')]
         question_message = 'Все ли время посвятил обеду или обкашливал рабочие вопросы?'
         settings.REST_TIME_TYPE = 'dinner'
-    dialogues.print_message_with_keyboard(question_message, buttons_text_list)
+    print_message_with_keyboard(question_message, buttons_text_list)
     return 'wait_answer'
 
 
@@ -55,7 +55,7 @@ def print_rest_fallback(update, context):
 
 
 def end_of_day(update, context):
-    end_of_day_message = dialogues.send_end_of_day_message()
+    end_of_day_message = send_end_of_day_message()
     if update.callback_query == None:
         settings.MYBOT.bot.send_message(chat_id=config.CHAT_ID, text=end_of_day_message)
     else:
@@ -75,9 +75,9 @@ def current_result_of_day(update, context):
         can_user_go_home = 'Солнце еще высоко, клубника сама себя не вырастит!:)'
     current_result_message = f'''
 Сегодня:
-Потрачено на работу - {utils.timedelta_to_time_string(settings.SUMMARY_WORK_TIME, full_format=True)}
-Ты отдыхал - {utils.timedelta_to_time_string(settings.SUMMARY_BREAK_TIME, full_format=True)}
-Обедал - {utils.timedelta_to_time_string(settings.SUMMARY_DINNER_TIME, full_format=True)}
+Потрачено на работу - {timedelta_to_time_string(settings.SUMMARY_WORK_TIME, full_format=True)}
+Ты отдыхал - {timedelta_to_time_string(settings.SUMMARY_BREAK_TIME, full_format=True)}
+Обедал - {timedelta_to_time_string(settings.SUMMARY_DINNER_TIME, full_format=True)}
 {can_user_go_home}
 '''
     update.message.reply_text(text=current_result_message)

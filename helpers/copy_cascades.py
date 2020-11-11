@@ -5,7 +5,7 @@ from shutil import copytree, copy2
 path_to_cv2 = cv2.__file__
 path_to_data = path.join(path.dirname(path_to_cv2), 'data')
 base_path = path.dirname(__file__)
-path_to_copy = path.join(base_path, 'cascades')
+path_to_copy = path.join(base_path, '..', 'cascades')
 
 if not path.exists(path_to_copy):
     makedirs(path_to_copy)

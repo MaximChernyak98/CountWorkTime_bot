@@ -3,8 +3,8 @@ from telegram import InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMa
 
 import config
 import settings
-import utils
-import google_spreadsheet
+from helpers.timedelta_to_str import timedelta_to_time_string
+from helpers.google_spreadsheet import GOOGLE_WORKSHEET
 
 
 def form_main_keyboard():
@@ -46,16 +46,16 @@ def send_return_to_workspace_message():
 def send_end_of_day_message():
     end_of_day_message = f'''
 Поздравляю с окончанием рабочего дня!\nРезультат на сегодня:
-Рабочее время - {utils.timedelta_to_time_string(settings.SUMMARY_WORK_TIME, full_format=True)};
-Время перерывов - {utils.timedelta_to_time_string(settings.SUMMARY_BREAK_TIME, full_format=True)}
-Время обеда - {utils.timedelta_to_time_string(settings.SUMMARY_DINNER_TIME, full_format=True)}
+Рабочее время - {timedelta_to_time_string(settings.SUMMARY_WORK_TIME, full_format=True)};
+Время перерывов - {timedelta_to_time_string(settings.SUMMARY_BREAK_TIME, full_format=True)}
+Время обеда - {timedelta_to_time_string(settings.SUMMARY_DINNER_TIME, full_format=True)}
 '''
     if settings.USE_GOOGLE_SPREADSHEET:
         time = datetime.datetime.now().strftime('%H:%M:%S')
         date = datetime.datetime.today().strftime('%d.%m.%Y')
-        work_time = utils.timedelta_to_time_string(settings.SUMMARY_WORK_TIME, full_format=False)
-        break_time = utils.timedelta_to_time_string(settings.SUMMARY_BREAK_TIME, full_format=False)
-        dinner_time = utils.timedelta_to_time_string(settings.SUMMARY_DINNER_TIME, full_format=False)
+        work_time = timedelta_to_time_string(settings.SUMMARY_WORK_TIME, full_format=False)
+        break_time = timedelta_to_time_string(settings.SUMMARY_BREAK_TIME, full_format=False)
+        dinner_time = timedelta_to_time_string(settings.SUMMARY_DINNER_TIME, full_format=False)
         new_row = [time, date, work_time, break_time, dinner_time]
-        google_spreadsheet.GOOGLE_WORKSHEET.append_row(new_row)
+        GOOGLE_WORKSHEET.append_row(new_row)
     return end_of_day_message

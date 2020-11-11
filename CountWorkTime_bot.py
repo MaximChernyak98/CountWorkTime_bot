@@ -1,5 +1,4 @@
 import logging
-import time
 
 from telegram.ext import (
     MessageHandler,
@@ -9,7 +8,7 @@ from telegram.ext import (
     CommandHandler
 )
 
-from utils import (
+from helpers.utils import (
     search_faces_in_frames,
     start_caption_frame,
     count_job_detection,
@@ -17,7 +16,7 @@ from utils import (
     set_states_current_iteration
 )
 
-from handlers import (
+from interaction.handlers import (
     greeting,
     rest_message,
     print_rest_fallback,
@@ -27,11 +26,15 @@ from handlers import (
     cheat_code
 )
 
-from rest_handlers import full_rest, part_rest, count_rest_part
+from interaction.rest_handlers import (
+    count_rest_part,
+    full_rest,
+    part_rest
+)
+
+from interaction.rest_conversation import rest_conversation
 from settings import MYBOT
-import config
 import initialization
-from dialogues import send_end_of_day_message
 
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -44,22 +47,15 @@ def main():
     dp = MYBOT.dispatcher
     initialization.initialization(dp)
 
-    rest_conversation = ConversationHandler(
-        entry_points=[CallbackQueryHandler(rest_message, pattern='^(rest|work|dinner)$')],
-        states={'wait_answer': [CallbackQueryHandler(full_rest, pattern='full_rest'),
-                                CallbackQueryHandler(part_rest, pattern='partial_rest')],
-                'get_percent': [MessageHandler(Filters.regex('^\d+$'), count_rest_part)]
-                },
-        fallbacks=[MessageHandler(Filters.all, print_rest_fallback)]
-    )
-
     number_job_detection = 0
-    states_from_previous_iteration = {'start_work': False, 'man_at_work': False}
-    face_cascade, video_for_caption = start_caption_frame()
+    states_from_previous_iteration = {
+        'start_work': False, 'man_at_work': False}
+    face_cascades, video_for_caption = start_caption_frame()
 
     while True:
-        number_of_face_occurrences = search_faces_in_frames(face_cascade, video_for_caption)
+        number_of_face_occurrences = search_faces_in_frames(face_cascades, video_for_caption)
         number_job_detection = count_job_detection(number_of_face_occurrences, number_job_detection)
+        print(number_job_detection)
         count_work_intervals(states_from_previous_iteration)
 
         dp.add_handler(CommandHandler('Start', greeting))
