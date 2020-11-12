@@ -3,7 +3,8 @@ import datetime
 import settings
 import config
 from helpers.utils import timedelta_to_time_string
-from interaction.dialogues import print_message_with_keyboard, send_end_of_day_message
+from interaction.dialogues import print_message_with_keyboard, send_end_of_day_message, form_main_keyboard
+from telegram.ext import ConversationHandler
 
 
 def greeting(update, context):
@@ -54,6 +55,10 @@ def print_rest_fallback(update, context):
     update.message.reply_text('Просто пришли цифру от 1 до 99, не выделывайся:)')
 
 
+def print_pomodoro_fallback(update, context):
+    update.message.reply_text('Просто пришли цифру от 5 до 40, не выделывайся:)')
+
+
 def end_of_day(update, context):
     end_of_day_message = send_end_of_day_message()
     if update.callback_query == None:
@@ -81,3 +86,14 @@ def current_result_of_day(update, context):
 {can_user_go_home}
 '''
     update.message.reply_text(text=current_result_message)
+
+
+def set_pomadoro_timer(update, context):
+    pomodoro_time = int(update.message.text)
+    if 5 <= pomodoro_time <= 40:
+        set_pomoro_text = f'Поставил таймер на {pomodoro_time} минут'
+        update.message.reply_text(text=set_pomoro_text, reply_markup=form_main_keyboard())
+        return ConversationHandler.END
+    else:
+        update.message.reply_text(text=f'Введи, пожалуйста, от 5 до 40 минут')
+        return 'get_pomadoro_time'

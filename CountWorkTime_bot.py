@@ -32,7 +32,7 @@ from interaction.rest_handlers import (
     part_rest
 )
 
-from interaction.rest_conversation import rest_conversation
+from interaction.rest_conversation import rest_conversation, set_pomadoro_conversation
 from settings import MYBOT
 import initialization
 
@@ -64,7 +64,11 @@ def main():
         dp.add_handler(CallbackQueryHandler(mini_break, pattern='mini_break'))
         dp.add_handler(MessageHandler(Filters.regex('^(Завершить работу)$'), end_of_day))
         dp.add_handler(MessageHandler(Filters.regex('^(Результаты дня)$'), current_result_of_day))
+
+        dp.add_handler(MessageHandler(Filters.regex('^(Текущая Pomodoro)$'), 2))
+
         dp.add_handler(rest_conversation)
+        dp.add_handler(set_pomadoro_conversation)
 
         states_from_previous_iteration = set_states_current_iteration(states_from_previous_iteration)
 
