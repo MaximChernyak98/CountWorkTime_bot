@@ -8,7 +8,7 @@ from helpers.google_spreadsheet import GOOGLE_WORKSHEET
 
 
 def form_main_keyboard():
-    keyboard_buttons = [["Завершить работу", "Результаты дня"]]
+    keyboard_buttons = [['Завершить работу', 'Результаты дня'], ['Поставить Pomadoro', 'Текущая Pomadoro']]
     main_keyboard = ReplyKeyboardMarkup(keyboard_buttons, resize_keyboard=True)
     return main_keyboard
 
