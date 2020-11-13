@@ -3,7 +3,8 @@ import datetime
 import settings
 import config
 from helpers.utils import timedelta_to_time_string
-from interaction.dialogues import print_message_with_keyboard, send_end_of_day_message, form_main_keyboard
+from interaction.dialogues import (print_message_with_keyboard, send_end_of_day_message,
+                                   form_main_keyboard, send_pomodoro_notification)
 from telegram.ext import ConversationHandler
 
 
@@ -91,6 +92,8 @@ def current_result_of_day(update, context):
 def set_pomadoro_timer(update, context):
     pomodoro_time = int(update.message.text)
     if 5 <= pomodoro_time <= 40:
+        settings.JQ.run_once(callback=send_pomodoro_notification, when=5)
+
         set_pomoro_text = f'Поставил таймер на {pomodoro_time} минут'
         update.message.reply_text(text=set_pomoro_text, reply_markup=form_main_keyboard())
         return ConversationHandler.END

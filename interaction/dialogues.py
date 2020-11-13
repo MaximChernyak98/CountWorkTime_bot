@@ -72,3 +72,8 @@ def send_pomodoro_message(update, context):
                                                                      )
                                     )
     return 'get_pomadoro_time'
+
+
+def send_pomodoro_notification(*args):
+    reply_text = 'помодоро кончилась'
+    settings.MYBOT.bot.send_message(chat_id=config.CHAT_ID, text=reply_text)
