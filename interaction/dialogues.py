@@ -74,6 +74,15 @@ def send_pomodoro_message(update, context):
     return 'get_pomadoro_time'
 
 
-def send_pomodoro_notification(*args):
-    reply_text = 'помодоро кончилась'
-    settings.MYBOT.bot.send_message(chat_id=config.CHAT_ID, text=reply_text)
+def delete_pomodoro_message(mes_id):
+    print(f'{mes_id} - удаляю')
+    #settings.MYBOT.bot.delete_message(chat_id=config.CHAT_ID, message_id=mes_id)
+
+
+def send_pomodoro_notification(*args, del_message=True):
+    reply_text = 'Pomodoro кончилась'
+    pomodoro_message = settings.MYBOT.bot.send_message(chat_id=config.CHAT_ID, text=reply_text)
+    if del_message:
+        message_number = pomodoro_message.message_id
+        print(f'{message_number} - хочу удалить')
+        # settings.JQ.run_once(callback=delete_pomodoro_message(message_number), when=10)
