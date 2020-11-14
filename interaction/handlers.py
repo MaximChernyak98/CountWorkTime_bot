@@ -2,6 +2,7 @@ import datetime
 
 import settings
 import config
+from telegram import ReplyKeyboardMarkup
 from helpers.utils import timedelta_to_time_string
 from interaction.dialogues import (print_message_with_keyboard, send_end_of_day_message,
                                    form_main_keyboard, send_pomodoro_notification)
@@ -16,7 +17,8 @@ def greeting(update, context):
 
 
 def cheat_code(update, context):
-    settings.SUMMARY_WORK_TIME = settings.HOURS_FOR_WORK_AT_DAY + datetime.timedelta(minutes=1)
+    settings.SUMMARY_WORK_TIME = settings.HOURS_FOR_WORK_AT_DAY + \
+        datetime.timedelta(minutes=1)
 
 
 def mini_break(update, context):
@@ -53,17 +55,20 @@ def rest_message(update, context):
 
 
 def print_rest_fallback(update, context):
-    update.message.reply_text('Просто пришли цифру от 1 до 99, не выделывайся:)')
+    update.message.reply_text(
+        'Просто пришли цифру от 1 до 99, не выделывайся:)')
 
 
 def print_pomodoro_fallback(update, context):
-    update.message.reply_text('Просто пришли цифру от 5 до 40, не выделывайся:)')
+    update.message.reply_text(
+        'Просто пришли цифру от 5 до 40, не выделывайся:)')
 
 
 def end_of_day(update, context):
     end_of_day_message = send_end_of_day_message()
     if update.callback_query == None:
-        settings.MYBOT.bot.send_message(chat_id=config.CHAT_ID, text=end_of_day_message)
+        settings.MYBOT.bot.send_message(
+            chat_id=config.CHAT_ID, text=end_of_day_message)
     else:
         update.callback_query.edit_message_text(text=end_of_day_message)
     settings.SUMMARY_WORK_TIME = datetime.timedelta()
@@ -92,12 +97,36 @@ def current_result_of_day(update, context):
 def set_pomadoro_timer(update, context):
     pomodoro_time = int(update.message.text)
     if 5 <= pomodoro_time <= 40:
-        settings.JQ.run_once(callback=send_pomodoro_notification, when=5, context={'delete_message': True})
-        settings.JQ.run_once(callback=send_pomodoro_notification, when=6, context={'delete_message': True})
-        settings.JQ.run_once(callback=send_pomodoro_notification, when=7, context={'delete_message': False})
+        pomodoro_time_in_seconds = pomodoro_time*60
+        settings.JQ.run_once(callback=send_pomodoro_notification, when=pomodoro_time_in_seconds, context={
+                             'delete_message': True})
+        settings.JQ.run_once(callback=send_pomodoro_notification, when=pomodoro_time_in_seconds+1, context={
+                             'delete_message': True})
+        settings.JQ.run_once(callback=send_pomodoro_notification, when=pomodoro_time_in_seconds+2, context={
+                             'delete_message': False})
         set_pomoro_text = f'Поставил таймер на {pomodoro_time} минут'
-        update.message.reply_text(text=set_pomoro_text, reply_markup=form_main_keyboard())
+        update.message.reply_text(
+            text=set_pomoro_text, reply_markup=form_main_keyboard())
         return ConversationHandler.END
     else:
         update.message.reply_text(text=f'Введи, пожалуйста, от 5 до 40 минут')
         return 'get_pomadoro_time'
+
+
+def delete_all_pomodoro(update, context):
+    jobs_tuple = settings.JQ.get_jobs_by_name('send_pomodoro_notification')
+    if jobs_tuple:
+        for job in jobs_tuple:
+            job.schedule_removal()
+        update.callback_query.edit_message_text(
+            text=f'Активная Pomodoro удалена')
+        reply_text = 'Укажи время Pomodoro (от 5 до 40 минут)'
+        reply_keyboard = [['5', '10', '15', '20', '25', '30', '35', '40']]
+        settings.MYBOT.bot.send_message(chat_id=config.CHAT_ID,
+                                        text=reply_text,
+                                        reply_markup=ReplyKeyboardMarkup(reply_keyboard,
+                                                                         resize_keyboard=True,
+                                                                         one_time_keyboard=True
+                                                                         )
+                                        )
+    return 'get_pomadoro_time'
