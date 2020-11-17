@@ -7,6 +7,8 @@ JQ = MYBOT.job_queue
 
 USE_GOOGLE_SPREADSHEET = True
 
+DEBUG = True
+
 REST_TIME_TYPE = 'rest'
 
 IS_MAN_AT_WORKPLACE = False
