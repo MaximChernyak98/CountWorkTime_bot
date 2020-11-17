@@ -17,8 +17,12 @@ def greeting(update, context):
 
 
 def cheat_code(update, context):
-    settings.SUMMARY_WORK_TIME = settings.HOURS_FOR_WORK_AT_DAY + \
-        datetime.timedelta(minutes=1)
+    settings.SUMMARY_WORK_TIME = settings.HOURS_FOR_WORK_AT_DAY + datetime.timedelta(minutes=1)
+
+
+def switch_debug_mode(update, context):
+    print('Меняю отладку')
+    settings.DEBUG_MODE = not settings.DEBUG_MODE
 
 
 def mini_break(update, context):

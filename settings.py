@@ -2,12 +2,13 @@ from datetime import datetime, timedelta
 from telegram.ext import Updater
 import config
 
+
 MYBOT = Updater(token=config.TOKEN, use_context=True)
 JQ = MYBOT.job_queue
 
 USE_GOOGLE_SPREADSHEET = True
 
-DEBUG = True
+DEBUG_MODE = True
 
 REST_TIME_TYPE = 'rest'
 

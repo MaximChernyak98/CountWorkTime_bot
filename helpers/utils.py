@@ -5,6 +5,8 @@ import sys
 
 import settings
 
+from helpers.debug_decorator import Debugger
+
 from helpers.timedelta_to_str import timedelta_to_time_string
 
 from interaction.dialogues import (
@@ -52,6 +54,7 @@ def search_face_by_cascades(gray_frame, face_cascades):
     return number_of_face_in_frame
 
 
+@Debugger
 def search_faces_in_frames(face_cascades, video_for_caption):
     number_of_face_occurrences = 0
     end_capture_time = datetime.now() + timedelta(seconds=1)

@@ -24,8 +24,7 @@ def print_message_with_keyboard(message, buttons_text_list):
     # buttons_text_list ('button_text', 'button_callback_data')
     keyboard = []
     for button in buttons_text_list:
-        keyboard.append(InlineKeyboardButton(
-            button[0], callback_data=button[1]))
+        keyboard.append(InlineKeyboardButton(button[0], callback_data=button[1]))
     reply_markup = InlineKeyboardMarkup([keyboard])
     settings.MYBOT.bot.send_message(
         chat_id=config.CHAT_ID, text=message, reply_markup=reply_markup)
@@ -80,8 +79,7 @@ def send_pomodoro_message(update, context):
         seconds_for_print = seconds % 60
         message = (f'Уже есть активная Pomadoro до окончания осталось '
                    f'{minutes_for_print} минут и {seconds_for_print} секунд.')
-        buttons_text_list = [
-            ('Удалить активную и запустить новую?', 'set_new_pomadoro')]
+        buttons_text_list = [('Удалить активную и запустить новую?', 'set_new_pomadoro')]
         print_message_with_keyboard(message, buttons_text_list)
         return ConversationHandler.END
     else:
@@ -99,8 +97,7 @@ def send_pomodoro_message(update, context):
 
 def delete_pomodoro_message(context):
     deleting_message = context.job.context.get('deleting_message')
-    settings.MYBOT.bot.delete_message(
-        chat_id=config.CHAT_ID, message_id=deleting_message)
+    settings.MYBOT.bot.delete_message(chat_id=config.CHAT_ID, message_id=deleting_message)
 
 
 def send_pomodoro_notification(context):
@@ -110,5 +107,4 @@ def send_pomodoro_notification(context):
     delete_message = context.job.context.get('delete_message')
     if delete_message:
         message_number = pomodoro_message.message_id
-        settings.JQ.run_once(callback=delete_pomodoro_message, when=3, context={
-                             'deleting_message': message_number})
+        settings.JQ.run_once(callback=delete_pomodoro_message, when=3, context={'deleting_message': message_number})
