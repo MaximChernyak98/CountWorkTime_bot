@@ -1,4 +1,5 @@
 import logging
+import time
 
 from telegram.ext import (
     MessageHandler,
@@ -7,6 +8,9 @@ from telegram.ext import (
     ConversationHandler,
     CommandHandler
 )
+
+from telegram.error import RetryAfter, TimedOut
+
 
 from helpers.utils import (
     search_faces_in_frames,
@@ -57,24 +61,28 @@ def main():
     settings.DEBUG_MODE = False
 
     while True:
-        Debugger.enabled = settings.DEBUG_MODE
+        try:
+            Debugger.enabled = settings.DEBUG_MODE
 
-        number_of_face_occurrences = search_faces_in_frames(face_cascades, video_for_caption)
-        number_job_detection = count_job_detection(number_of_face_occurrences, number_job_detection)
-        count_work_intervals(states_from_previous_iteration)
+            number_of_face_occurrences = search_faces_in_frames(face_cascades, video_for_caption)
+            number_job_detection = count_job_detection(number_of_face_occurrences, number_job_detection)
+            count_work_intervals(states_from_previous_iteration)
 
-        dp.add_handler(CommandHandler('Start', greeting))
-        dp.add_handler(CommandHandler('Cheat', cheat_code))
-        dp.add_handler(CommandHandler('Switch', switch_debug_mode))
-        dp.add_handler(CallbackQueryHandler(end_of_day, pattern='end_workday'))
-        dp.add_handler(CallbackQueryHandler(mini_break, pattern='mini_break'))
-        dp.add_handler(MessageHandler(Filters.regex('^(Завершить работу)$'), end_of_day))
-        dp.add_handler(MessageHandler(Filters.regex('^(Результаты дня)$'), current_result_of_day))
+            dp.add_handler(CommandHandler('Start', greeting))
+            dp.add_handler(CommandHandler('Cheat', cheat_code))
+            dp.add_handler(CommandHandler('Switch', switch_debug_mode))
+            dp.add_handler(CallbackQueryHandler(end_of_day, pattern='end_workday'))
+            dp.add_handler(CallbackQueryHandler(mini_break, pattern='mini_break'))
+            dp.add_handler(MessageHandler(Filters.regex('^(Завершить работу)$'), end_of_day))
+            dp.add_handler(MessageHandler(Filters.regex('^(Результаты дня)$'), current_result_of_day))
 
-        dp.add_handler(rest_conversation)
-        dp.add_handler(set_pomadoro_conversation)
+            dp.add_handler(rest_conversation)
+            dp.add_handler(set_pomadoro_conversation)
 
-        states_from_previous_iteration = set_states_current_iteration(states_from_previous_iteration)
+            states_from_previous_iteration = set_states_current_iteration(states_from_previous_iteration)
+        except (RetryAfter, TimedOut) as e:
+            print('Словил леща')
+            time.sleep(5)
 
 
 if __name__ == '__main__':

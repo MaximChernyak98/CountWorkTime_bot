@@ -17,8 +17,7 @@ from interaction.dialogues import (
 
 
 def get_paths_to_face_cascades(dir: str):
-    list_of_face_cascades = [
-        'haarcascade_frontalface_default.xml', 'haarcascade_profileface.xml']
+    list_of_face_cascades = ['haarcascade_frontalface_default.xml', 'haarcascade_profileface.xml']
     paths_to_face_cascades = []
     for cascade in list_of_face_cascades:
         path_to_current_cascade = os.path.join(dir, 'cascades', cascade)
@@ -38,8 +37,7 @@ def start_caption_frame():
             face_cascades.append(cv2.CascadeClassifier(path_to_cascade))
     else:
         # TODO переделать в исключение
-        sys.exit(
-            f'Ни один файл с шаблоном не был найден, проверьте наличие папки cascades')
+        sys.exit(f'Ни один файл с шаблоном не был найден, проверьте наличие папки cascades')
     video_capture = cv2.VideoCapture(0)
     return face_cascades, video_capture
 

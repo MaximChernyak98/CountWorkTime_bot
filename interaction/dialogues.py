@@ -1,5 +1,6 @@
 import datetime
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup
+from telegram.ext import ConversationHandler
 
 import config
 import settings
@@ -16,8 +17,7 @@ def form_main_keyboard():
 
 def print_first_message():
     first_message = f'Вижу тебя, с началом рабочего дня!'
-    settings.MYBOT.bot.send_message(
-        chat_id=config.CHAT_ID, text=first_message, reply_markup=form_main_keyboard())
+    settings.MYBOT.bot.send_message(chat_id=config.CHAT_ID, text=first_message, reply_markup=form_main_keyboard())
 
 
 def print_message_with_keyboard(message, buttons_text_list):
