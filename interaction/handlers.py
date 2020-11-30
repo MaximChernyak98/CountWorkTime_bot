@@ -2,8 +2,12 @@ import datetime
 
 import settings
 import config
+from telegram import ReplyKeyboardMarkup
 from helpers.utils import timedelta_to_time_string
-from interaction.dialogues import print_message_with_keyboard, send_end_of_day_message
+from interaction.dialogues import (print_message_with_keyboard, send_end_of_day_message, form_main_keyboard)
+from interaction.pomodoro import send_pomodoro_notification
+
+from telegram.ext import ConversationHandler
 
 
 def greeting(update, context):
@@ -15,6 +19,11 @@ def greeting(update, context):
 
 def cheat_code(update, context):
     settings.SUMMARY_WORK_TIME = settings.HOURS_FOR_WORK_AT_DAY + datetime.timedelta(minutes=1)
+
+
+def switch_debug_mode(update, context):
+    print('Меняю отладку')
+    settings.DEBUG_MODE = not settings.DEBUG_MODE
 
 
 def mini_break(update, context):
@@ -51,13 +60,20 @@ def rest_message(update, context):
 
 
 def print_rest_fallback(update, context):
-    update.message.reply_text('Просто пришли цифру от 1 до 99, не выделывайся:)')
+    update.message.reply_text(
+        'Просто пришли цифру от 1 до 99, не выделывайся:)')
+
+
+def print_pomodoro_fallback(update, context):
+    update.message.reply_text(
+        'Просто пришли цифру от 5 до 40, не выделывайся:)')
 
 
 def end_of_day(update, context):
     end_of_day_message = send_end_of_day_message()
     if update.callback_query == None:
-        settings.MYBOT.bot.send_message(chat_id=config.CHAT_ID, text=end_of_day_message)
+        settings.MYBOT.bot.send_message(
+            chat_id=config.CHAT_ID, text=end_of_day_message)
     else:
         update.callback_query.edit_message_text(text=end_of_day_message)
     settings.SUMMARY_WORK_TIME = datetime.timedelta()

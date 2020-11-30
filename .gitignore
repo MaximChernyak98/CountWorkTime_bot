@@ -5,6 +5,7 @@ config.py
 *.csv
 .vscode/
 .idea/
+db/
 cascades/
 *.png
 *.jpg
@@ -14,6 +15,7 @@ credentials.json
 .images/
 *.pickle
 trainner.yml
+*.db
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

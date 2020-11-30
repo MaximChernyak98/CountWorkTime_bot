@@ -11,7 +11,8 @@ current_dir = os.path.dirname(__file__)
 face_cascade_xml = 'haarcascade_frontalface_default.xml'
 labels = {'person_name': 1}
 
-with open('labels.pickle', 'rb') as f:
+dir_to_pickle = os.path.join(current_dir, 'labels.pickle')
+with open(dir_to_pickle, 'rb') as f:
     labels_from_pickle = pickle.load(f)
     labels = {v: k for k, v in labels_from_pickle.items()}
 

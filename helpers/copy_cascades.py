@@ -10,7 +10,11 @@ path_to_copy = path.join(base_path, '..', 'cascades')
 if not path.exists(path_to_copy):
     makedirs(path_to_copy)
 
+
 def copy_directory(source, distanation, symlinks=False, ignore=None):
+    '''
+    After installing cv2 module copy cascades-files for bot follow-up work
+    '''
     for item in listdir(source):
         try:
             source_file = path.join(source, item)
@@ -22,4 +26,6 @@ def copy_directory(source, distanation, symlinks=False, ignore=None):
         except FileExistsError:
             continue
 
-copy_directory(path_to_data, path_to_copy)
+
+if __name__ == '__main__':
+    copy_directory(path_to_data, path_to_copy)
