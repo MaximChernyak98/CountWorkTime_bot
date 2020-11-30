@@ -1,22 +1,11 @@
-from telegram.ext import (
-    MessageHandler,
-    Filters,
-    CallbackQueryHandler,
-    ConversationHandler,
-    CommandHandler
-)
+from telegram.ext import (MessageHandler, Filters, CallbackQueryHandler, ConversationHandler, CommandHandler)
 
-from interaction.rest_handlers import (
-    count_rest_part,
-    full_rest,
-    part_rest,
-
-)
-
+from interaction.rest_handlers import (count_rest_part, full_rest, part_rest)
 
 from interaction.handlers import (rest_message, print_rest_fallback,
-                                  set_pomadoro_timer, print_pomodoro_fallback, delete_all_pomodoro)
-from interaction.dialogues import send_pomodoro_message
+                                  print_pomodoro_fallback)
+
+from interaction.pomodoro import (send_pomodoro_message, set_pomadoro_timer, delete_all_pomodoro)
 
 rest_conversation = ConversationHandler(
     entry_points=[CallbackQueryHandler(rest_message, pattern='^(rest|work|dinner)$')],
@@ -26,7 +15,6 @@ rest_conversation = ConversationHandler(
             },
     fallbacks=[MessageHandler(Filters.all, print_rest_fallback)]
 )
-
 
 set_pomadoro_conversation = ConversationHandler(
     entry_points=[MessageHandler(Filters.regex('^(Поставить Pomodoro)$'), send_pomodoro_message),

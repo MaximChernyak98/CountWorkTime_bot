@@ -8,6 +8,10 @@ import settings
 
 
 def give_access_to_worksheet():
+    '''
+    If user set USE_GOOGLE_SPREADSHEET = True in settings.py
+    open session with google-spreadsheet and save data
+    '''
     current_dir = os.getcwd()
     credentials_file_name = 'credentials.json'
     path_to_credentials = os.path.join(current_dir, credentials_file_name)

@@ -4,8 +4,9 @@ import settings
 import config
 from telegram import ReplyKeyboardMarkup
 from helpers.utils import timedelta_to_time_string
-from interaction.dialogues import (print_message_with_keyboard, send_end_of_day_message,
-                                   form_main_keyboard, send_pomodoro_notification)
+from interaction.dialogues import (print_message_with_keyboard, send_end_of_day_message, form_main_keyboard)
+from interaction.pomodoro import send_pomodoro_notification
+
 from telegram.ext import ConversationHandler
 
 
@@ -96,41 +97,3 @@ def current_result_of_day(update, context):
 {can_user_go_home}
 '''
     update.message.reply_text(text=current_result_message)
-
-
-def set_pomadoro_timer(update, context):
-    pomodoro_time = int(update.message.text)
-    if 5 <= pomodoro_time <= 40:
-        pomodoro_time_in_seconds = pomodoro_time*60
-        settings.JQ.run_once(callback=send_pomodoro_notification, when=pomodoro_time_in_seconds, context={
-                             'delete_message': True})
-        settings.JQ.run_once(callback=send_pomodoro_notification, when=pomodoro_time_in_seconds+1, context={
-                             'delete_message': True})
-        settings.JQ.run_once(callback=send_pomodoro_notification, when=pomodoro_time_in_seconds+2, context={
-                             'delete_message': False})
-        set_pomoro_text = f'Поставил таймер на {pomodoro_time} минут'
-        update.message.reply_text(
-            text=set_pomoro_text, reply_markup=form_main_keyboard())
-        return ConversationHandler.END
-    else:
-        update.message.reply_text(text=f'Введи, пожалуйста, от 5 до 40 минут')
-        return 'get_pomadoro_time'
-
-
-def delete_all_pomodoro(update, context):
-    jobs_tuple = settings.JQ.get_jobs_by_name('send_pomodoro_notification')
-    if jobs_tuple:
-        for job in jobs_tuple:
-            job.schedule_removal()
-        update.callback_query.edit_message_text(
-            text=f'Активная Pomodoro удалена')
-        reply_text = 'Укажи время Pomodoro (от 5 до 40 минут)'
-        reply_keyboard = [['5', '10', '15', '20', '25', '30', '35', '40']]
-        settings.MYBOT.bot.send_message(chat_id=config.CHAT_ID,
-                                        text=reply_text,
-                                        reply_markup=ReplyKeyboardMarkup(reply_keyboard,
-                                                                         resize_keyboard=True,
-                                                                         one_time_keyboard=True
-                                                                         )
-                                        )
-    return 'get_pomadoro_time'

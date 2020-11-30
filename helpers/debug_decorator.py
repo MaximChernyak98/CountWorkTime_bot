@@ -1,6 +1,7 @@
 class Debugger(object):
-    """ Debug a method and return it back"""
-
+    """ Debug a method and return it back
+        Use for debug-mode when camera not in workplace
+    """
     enabled = False
 
     def __init__(self, func):

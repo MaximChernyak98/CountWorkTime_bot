@@ -26,8 +26,7 @@ def print_message_with_keyboard(message, buttons_text_list):
     for button in buttons_text_list:
         keyboard.append(InlineKeyboardButton(button[0], callback_data=button[1]))
     reply_markup = InlineKeyboardMarkup([keyboard])
-    settings.MYBOT.bot.send_message(
-        chat_id=config.CHAT_ID, text=message, reply_markup=reply_markup)
+    settings.MYBOT.bot.send_message(chat_id=config.CHAT_ID, text=message, reply_markup=reply_markup)
 
 
 def send_left_from_workspace_message():
@@ -66,45 +65,3 @@ def send_end_of_day_message():
         new_row = [time, date, work_time, break_time, dinner_time]
         GOOGLE_WORKSHEET.append_row(new_row)
     return end_of_day_message
-
-
-def send_pomodoro_message(update, context):
-    jobs_names = settings.JQ.get_jobs_by_name('send_pomodoro_notification')
-    if jobs_names:
-        end_time = jobs_names[0].next_t
-        now_time = datetime.datetime.now(datetime.timezone.utc)
-        end_of_next_pomodoro = end_time - now_time
-        seconds = end_of_next_pomodoro.seconds
-        minutes_for_print = (seconds % 3600) // 60
-        seconds_for_print = seconds % 60
-        message = (f'Уже есть активная Pomadoro до окончания осталось '
-                   f'{minutes_for_print} минут и {seconds_for_print} секунд.')
-        buttons_text_list = [('Удалить активную и запустить новую?', 'set_new_pomadoro')]
-        print_message_with_keyboard(message, buttons_text_list)
-        return ConversationHandler.END
-    else:
-        reply_text = 'Укажи время Pomodoro (от 5 до 40 минут)'
-        reply_keyboard = [['5', '10', '15', '20', '25', '30', '35', '40']]
-        settings.MYBOT.bot.send_message(chat_id=config.CHAT_ID,
-                                        text=reply_text,
-                                        reply_markup=ReplyKeyboardMarkup(reply_keyboard,
-                                                                         resize_keyboard=True,
-                                                                         one_time_keyboard=True
-                                                                         )
-                                        )
-        return 'get_pomadoro_time'
-
-
-def delete_pomodoro_message(context):
-    deleting_message = context.job.context.get('deleting_message')
-    settings.MYBOT.bot.delete_message(chat_id=config.CHAT_ID, message_id=deleting_message)
-
-
-def send_pomodoro_notification(context):
-    reply_text = 'Pomodoro кончилась'
-    pomodoro_message = settings.MYBOT.bot.send_message(
-        chat_id=config.CHAT_ID, text=reply_text)
-    delete_message = context.job.context.get('delete_message')
-    if delete_message:
-        message_number = pomodoro_message.message_id
-        settings.JQ.run_once(callback=delete_pomodoro_message, when=3, context={'deleting_message': message_number})

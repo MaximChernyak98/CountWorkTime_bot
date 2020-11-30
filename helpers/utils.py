@@ -36,7 +36,6 @@ def start_caption_frame():
         for path_to_cascade in paths_to_face_cascades:
             face_cascades.append(cv2.CascadeClassifier(path_to_cascade))
     else:
-        # TODO переделать в исключение
         sys.exit(f'Ни один файл с шаблоном не был найден, проверьте наличие папки cascades')
     video_capture = cv2.VideoCapture(0)
     return face_cascades, video_capture

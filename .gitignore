@@ -5,6 +5,7 @@ config.py
 *.csv
 .vscode/
 .idea/
+db/
 cascades/
 *.png
 *.jpg
