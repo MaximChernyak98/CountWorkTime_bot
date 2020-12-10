@@ -6,6 +6,7 @@ config.py
 .vscode/
 .idea/
 db/
+.pytest_cache
 cascades/
 *.png
 *.jpg
